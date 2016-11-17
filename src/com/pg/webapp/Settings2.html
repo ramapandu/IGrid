@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src&quot;,&quot;THEME&quot;:&quot;demo-theme&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-absolute-layout> 
+   <vaadin-vertical-layout width="596px" height="439px" margin _id="verticalLayout" :top="20px" :left="90px"> 
+    <vaadin-form-layout caption="Settings" width="363px" height="358px" margin _id="formLayout" :middle :center> 
+     <vaadin-text-field caption="DEAL Path" input-prompt="enter DEAL path" _id="path"></vaadin-text-field> 
+     <vaadin-text-field caption="File Name" input-prompt="enter file name" _id="filename"></vaadin-text-field> 
+     <vaadin-button responsive plain-text _id="submit">
+       Submit 
+     </vaadin-button> 
+     <vaadin-combo-box caption="Property" input-prompt="select property" _id="headerCombo"></vaadin-combo-box> 
+     <vaadin-text-field caption="New Name" input-prompt="enter value" _id="newValue"></vaadin-text-field> 
+     <vaadin-button width="91px" plain-text _id="headerSubmit">
+       Submit 
+     </vaadin-button> 
+    </vaadin-form-layout> 
+   </vaadin-vertical-layout> 
+  </vaadin-absolute-layout>  
+ </body>
+</html>
