@@ -1,5 +1,8 @@
 package com.pg.webapp;
 
+import java.util.Iterator;
+
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -66,9 +69,22 @@ public class SettingsView extends Settings2 {
 			@Override
 			public void buttonClick(ClickEvent event)
 			{
-//				Notification.show(activeSheet.getRow(0).getCell((int) headerCombo.getValue()).getStringCellValue()+" "+newValue.getValue()+" "+headerCombo.getValue().toString());
-//				activeSheet.getRow(0).getCell(Integer.valueOf((String) headerCombo.getValue())).setCellValue(newValue.getValue().toString());	
-				
+				Notification.show("Headers Updated");
+				int cellIndex=0;
+				Iterator<Cell> cellIterator = activeSheet.getRow(0).cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    if(cell.getCellType()==Cell.CELL_TYPE_STRING){ 
+                        String text = cell.getStringCellValue();
+                         if (headerCombo.getValue().equals(text)) {
+                            cellIndex=cell.getColumnIndex();
+                            break;
+                         }
+                       }
+                    }
+                activeSheet.getRow(0).getCell(cellIndex).setCellValue(newValue.getValue().toString());	
+                settingsWindow.close();
+                getAppUI().getCurrent().getPage().reload();				
 			}
 		});
 
