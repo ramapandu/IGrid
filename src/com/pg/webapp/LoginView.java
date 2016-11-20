@@ -1,5 +1,10 @@
 package com.pg.webapp;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.pg.webapp.database.DbConnection;
 import com.pg.webapp.domain.User;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -55,20 +60,10 @@ public class LoginView extends CustomComponent implements View {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-						username = emailField.getValue();
-						password = passwordField.getValue();
-						if (username.equals("test@test.com")
-								&& password.equals("test12345")) {
-							Notification.show("Welcome " + username);
-							// user.setLoggedInUser(username);
-							getAppUI().getUser().setLoggedInUser(username);
-							getAppUI().getNavigator().navigateTo("sheet");
-
-						} else {
-							Notification.show("User name OR Password is wrong");
-						}
-
+						validateLogin();
+						
 					}
+					
 				});
 
 		final Button cancelButton = new Button("Cancel",
@@ -78,7 +73,10 @@ public class LoginView extends CustomComponent implements View {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
+						
 					}
+
+					
 				});
 
 		HorizontalLayout buttonsContainer = new HorizontalLayout();
@@ -97,6 +95,39 @@ public class LoginView extends CustomComponent implements View {
 		mainLayout.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
 	}
 
+	public void validateLogin() {
+		username = emailField.getValue();
+		password = passwordField.getValue();
+		String dbUser,dbPassword;
+
+		try {
+			DbConnection conn=new DbConnection();
+			Statement stmt=conn.getConnection().createStatement();  
+			ResultSet rs=stmt.executeQuery("select * from users");  
+			while(rs.next())  {
+			System.out.println(rs.getString(2)+"  "+rs.getString(3));  
+			dbUser=rs.getString(2);
+			dbPassword=rs.getString(3);
+			if (username.equals(dbUser)
+					&& password.equals(dbPassword)) {
+				Notification.show("Welcome " + username);
+				getAppUI().getUser().setLoggedInUser(username);
+				getAppUI().getNavigator().navigateTo("sheet");
+				
+
+			} 
+			if(getAppUI().getUser().getLoggedInUser()==null)
+				Notification.show("User name OR Password is wrong");
+			}
+			conn.getConnection().close(); 
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+								
+	}
+	
 	@Override
 	public void enter(ViewChangeEvent event) {
 		emailField.focus();
