@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,6 +47,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -78,7 +82,7 @@ public class SheetView extends CustomComponent implements View {
 	FileInputStream fis;
 
 	@SuppressWarnings({ "unused" })
-	public SheetView() {
+	public SheetView() throws ClassNotFoundException, SQLException {
 		setSizeFull();
 
 		rootLayout = new VerticalLayout();
@@ -87,13 +91,13 @@ public class SheetView extends CustomComponent implements View {
        getAppUI().setSheetView(this);
 	}
 
-	private void CreateUI() {
+	private void CreateUI() throws ClassNotFoundException, SQLException {
 
 		rootLayout.addComponent(getTopBar());
 		rootLayout.addComponent(getSheetLayout());
 	}
 
-	public HorizontalLayout getSheetLayout() {
+	public HorizontalLayout getSheetLayout() throws ClassNotFoundException, SQLException {
 		sheetLayout = new HorizontalLayout();
 		sheetLayout.setSizeFull();
 		sheetLayout.setHeight("100%");
@@ -148,7 +152,7 @@ public class SheetView extends CustomComponent implements View {
 	}
 
 	@SuppressWarnings("unchecked")
-	private TabSheet getTabSheet() {
+	private TabSheet getTabSheet() throws ClassNotFoundException, SQLException {
 		tabSheet = new TabSheet();
 
 		tabSheet.addSelectedTabChangeListener(new SelectedTabChangeListener() {
@@ -163,13 +167,12 @@ public class SheetView extends CustomComponent implements View {
 		tabSheet.setSizeFull();
 		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		try {
-			tabSheet.addTab(openSheet(), "Sheet");
+//			tabSheet.addTab(openSheet(), "Sheet");------TEST
+			tabSheet.addTab(openSheetFromDB(), "Sheet");
 			getLogSheet();
 			logTable.setPageLength(logTable.size());
 
 			tabSheet.addTab(logTable, "Logs");
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -283,7 +286,8 @@ public class SheetView extends CustomComponent implements View {
 				try {
 					File tempFile = new File(filePath,fileName);
 					FileOutputStream fos = new FileOutputStream(tempFile);
-					spreadsheet.write(fos);
+					getAppUI().getSpreadsheet_dao().getSpreadsheet().write(fos);
+//					getAppUI().
 					fos.flush();
 					fos.close();
 					
@@ -334,6 +338,9 @@ public class SheetView extends CustomComponent implements View {
 				    logBook.write(fos2);
 					fos2.flush();
 					fos2.close();
+					
+					Notification.show("Spreadsheet saved !!!");
+					
 //					logBook.close();
 //					Byte[] bytes;
 //					ByteArrayInputStream bis=new ByteArrayInputStream(lo
@@ -399,7 +406,6 @@ public class SheetView extends CustomComponent implements View {
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(spreadsheet);
 		getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
 		changeHeaderColor(spreadsheet.getActiveSheet());
-		// ------------getAppUI().getLogTable().setLogTable(logTable);
         
 		spreadsheet.addSheetChangeListener(new SheetChangeListener() {
 
@@ -423,7 +429,51 @@ public class SheetView extends CustomComponent implements View {
 		
 		return spreadsheet;
 	}
+	
+	private Spreadsheet openSheetFromDB() throws ClassNotFoundException, SQLException{
+//		saveSheetToDB();----------TEST
+		 XLToDB obj = new XLToDB();
+		ResultSet rs= obj.getRecords();
+		
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int columnsNumber = rsmd.getColumnCount();
+		
+		Spreadsheet s=new Spreadsheet();
+		s.setSizeFull();
+		s.setHeight("550px");
+		s.createNewSheet("TEST2", 100, columnsNumber);
+		s.setActiveSheetIndex(0);
+		int i=0;
+//		System.out.println(s);
+//		System.out.println(s.getActiveSheet());
+//		System.out.println(s.getActiveSheet().getRow(i));
+		while(rs.next()){
+			s.getActiveSheet().createRow(i);
+			for(int j=1;j<columnsNumber;j++){
+				System.out.println(s.getActiveSheet().getRow(i));
+				System.out.println(rs.getString(j));
+//				s.getActiveSheet().getRow(i).createCell(j).se
+		s.getActiveSheet().getRow(i).createCell(j-1).setCellValue(rs.getString(j));
+		 
+//		 System.out.println(s.getActiveSheet().getRow(i).getCell(j).getStringCellValue());
+			}
+		i++;
+		}
+		s.refreshAllCellValues();
+		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
+		getPopUpButtonsForSheet(s.getActiveSheet());
+		changeHeaderColor(s.getActiveSheet());
+//		getAppUI().getCurrent().getPage().reload();
+		return s;
+		
+	}
 
+	private void saveSheetToDB(){
+		 XLToDB obj = new XLToDB();
+         obj.insertRecords();
+         
+	}
+	
 	private void updateLogTable(CellValueChangeEvent event) {
 	 	Set<CellReference> changedCells = null;
     	changedCells = event.getChangedCells();
@@ -437,7 +487,7 @@ public class SheetView extends CustomComponent implements View {
         while(iterator.hasNext()){
           cr=iterator.next();
           element =cr.getCellRefParts();
-          r = spreadsheet.getActiveSheet().getRow(Integer.valueOf(element[1])-1);
+          r = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(Integer.valueOf(element[1])-1);
           c=null;
         	c=r.getCell(new Integer(cr.getCol()));
         
@@ -445,7 +495,7 @@ public class SheetView extends CustomComponent implements View {
 			 
          logTable.addItem(new Object[] { getAppUI().getUser().getLoggedInUser(),
         		"Changed value in Cell-"+element[2]+""+element[1]+" in sheet-"+
-        				              spreadsheet.getActiveSheet().getSheetName()+" to "+c,d.toString() },
+        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to "+c,d.toString() },
 					new Integer(i+1));
         }					
 	}
@@ -453,7 +503,7 @@ public class SheetView extends CustomComponent implements View {
 	private void changeHeaderColor(Sheet activeSheet) {
 		
 		//TEST
-		CellStyle headerStyle = spreadsheet.getWorkbook().createCellStyle();
+		CellStyle headerStyle = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook().createCellStyle();
 		
 //		headerStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
 //		headerStyle.setFillForegroundColor(new XSSFColor(style.getProperty(CssColorProperty.BACKGROUND)));
@@ -516,7 +566,7 @@ public class SheetView extends CustomComponent implements View {
 					+ sheet.getLastRowNum() + " LASTCOLUMN:" + lastColumnNum+" SHEET:"+sheet.getSheetName());
 			// Create a table in the range
 			 table = new SpreadsheetFilterTable(
-					spreadsheet, sheet, range);
+					getAppUI().getSpreadsheet_dao().getSpreadsheet(), sheet, range);
 			table.getPopupButtons();
 	
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -525,8 +575,8 @@ public class SheetView extends CustomComponent implements View {
 	}
 
 	public void getPopUpButtonsForAllSheets() {
-		for (int i = 0; i < spreadsheet.getNumberOfSheets(); i++) {
-			Sheet s = spreadsheet.getWorkbook().getSheetAt(i);
+		for (int i = 0; i < getAppUI().getSpreadsheet_dao().getSpreadsheet().getNumberOfSheets(); i++) {
+			Sheet s = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook().getSheetAt(i);
 		
 			getPopUpButtonsForSheet(s);
 		}
