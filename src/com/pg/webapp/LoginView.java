@@ -6,6 +6,8 @@ import java.sql.Statement;
 
 import com.pg.webapp.database.DbConnection;
 import com.pg.webapp.domain.User;
+import com.pg.webapp.security.LDAPSearch;
+import com.pg.webapp.security.ValidateLogin;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -60,7 +62,12 @@ public class LoginView extends CustomComponent implements View {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-						validateLogin();
+						try {
+							validateLogin();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 					}
 					
@@ -95,12 +102,17 @@ public class LoginView extends CustomComponent implements View {
 		mainLayout.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
 	}
 
-	public void validateLogin() {
+	public void validateLogin() throws Exception {
 		username = emailField.getValue();
 		password = passwordField.getValue();
 		String dbUser,dbPassword;
 
 		try {
+//			LDAPSearch ldapSearch=new LDAPSearch();
+//			ldapSearch.Authenticate();
+			
+//			ValidateLogin vl=new ValidateLogin();
+//			vl.validateLogin("c5245576", "Rp223366!");
 			DbConnection conn=new DbConnection();
 			Statement stmt=conn.getConnection().createStatement();  
 			ResultSet rs=stmt.executeQuery("select * from users");  

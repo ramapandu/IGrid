@@ -41,6 +41,14 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<!-- repository>
+        <id>spring-snapshots</id>
+        <name>Spring Snapshots</name>
+        <url>https://repo.spring.io/libs-snapshot</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository -->
 	</repositories>
 
 	<pluginRepositories>
@@ -110,6 +118,14 @@
         <artifactId>mysql-connector-java</artifactId>
         <version>5.1.38</version>
 </dependency>
+
+<!--  dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>4.2.1.BUILD-SNAPSHOT</version>
+    </dependency-->
+   <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+
 
 	</dependencies>
   

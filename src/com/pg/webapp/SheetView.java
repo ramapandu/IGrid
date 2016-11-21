@@ -274,6 +274,110 @@ public class SheetView extends CustomComponent implements View {
 		return editButton;
 	}
 
+//	public Button getSaveButton() {
+//		saveButton = new Button("SAVE");
+//		saveButton.addStyleName("topbarbuttons");
+//		saveButton.addClickListener(new ClickListener() {
+//
+//			private static final long serialVersionUID = 1792550832130526578L;
+//
+//			@Override
+//			public void buttonClick(ClickEvent event) {
+//				try {
+//					File tempFile = new File(filePath,fileName);
+//					FileOutputStream fos = new FileOutputStream(tempFile);
+//					getAppUI().getSpreadsheet_dao().getSpreadsheet().write(fos);
+////					getAppUI().
+//					fos.flush();
+//					fos.close();
+//					
+//										
+//					File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
+//					FileInputStream fis2 = new FileInputStream(tempFile2);
+//					
+////					Spreadsheet s=new Spreadsheet(fis2);
+////					Workbook wb;
+////					int i=s.getLastRow();
+//					
+//					Collection<?> coll = logTable.getContainerDataSource().getItemIds();
+//					Iterator<?> iterate=coll.iterator();
+//					
+//					int i=logSheet.getLastRowNum();
+//					logSheet=logBook.getSheetAt(0);
+//					
+//	                for(int x = 1; x <= coll.size(); x++){
+//	                	
+//	                   Item item=logTable.getItem(iterate.next());
+//	                    
+////	                   System.out.println(item.getItemProperty(1).getValue().toString());
+////	                   System.out.println(item.getItemProperty(2).getValue().toString());
+////	                   System.out.println(item.getItemProperty(3).getValue().toString());
+//	                    						
+//						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("User").getValue().toString());
+//						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Action").getValue().toString());
+//						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Date").getValue().toString());
+//						
+////						logSheet.createRow(i);
+////						System.out.println("sheet "+logSheet.getRow(i).getCell(0).getStringCellValue());
+////						System.out.println("table "+logTable.getContainerDataSource().getItem(k).getItemProperty(1).getValue().toString());
+//						
+//						
+////						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(1).getValue().toString());
+////						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(2).getValue().toString());
+////						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(3).getValue().toString());
+//								
+////						logSheet.getRow(i+1).getCell(0).setCellValue(logTable.getItem(k).getItemProperty(1).getValue().toString());
+////						logSheet.getRow(i+1).getCell(1).setCellValue(logTable.getItem(k).getItemProperty(2).getValue().toString());
+////						logSheet.getRow(i+1).getCell(2).setCellValue(logTable.getItem(k).getItemProperty(3).getValue().toString());
+////						if(i<k)
+//						
+//	               				
+//					}
+//				
+//					FileOutputStream fos2 = new FileOutputStream(tempFile2);
+//				    logBook.write(fos2);
+//					fos2.flush();
+//					fos2.close();
+//					
+//					Notification.show("Spreadsheet saved !!!");
+//					
+////					logBook.close();
+////					Byte[] bytes;
+////					ByteArrayInputStream bis=new ByteArrayInputStream(lo
+////					logBook.write(fos2);
+////					fos2.flush();
+////					fos2.close();
+////					ExcelExport excelExport;
+//					
+////					File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
+////					org.apache.poi.openxml4j.opc.OPCPackage opc = 
+////							   org.apache.poi.openxml4j.opc.OPCPackage.open(tempFile2);
+////							org.apache.poi.xssf.usermodel.XSSFWorkbook wb =
+////							   new org.apache.poi.xssf.usermodel.XSSFWorkbook(opc);
+////							java.io.FileOutputStream fileOut = new java.io.FileOutputStream(tempFile2);
+////							wb.write(fileOut);
+////							opc.close();
+////							fileOut.close(); 
+//							
+////							FileInputStream fis = null; 
+////							try { 
+////							  fis = new FileInputStream(inputFilePath ); 
+////							  XSSFWorkbook workbook = new XSSFWorkbook(fis); 
+//					
+//					// ------getAppUI().getLogTable().setLogTable(logTable);
+//					// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//					// spreadsheet.write(bos);
+//					// byte[] data = bos.toByteArray();
+//					// bos.close();
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//		return saveButton;
+//	}
+
 	public Button getSaveButton() {
 		saveButton = new Button("SAVE");
 		saveButton.addStyleName("topbarbuttons");
@@ -284,13 +388,12 @@ public class SheetView extends CustomComponent implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
-					File tempFile = new File(filePath,fileName);
-					FileOutputStream fos = new FileOutputStream(tempFile);
-					getAppUI().getSpreadsheet_dao().getSpreadsheet().write(fos);
-//					getAppUI().
-					fos.flush();
-					fos.close();
-					
+//					File tempFile = new File(filePath,fileName);
+//					FileOutputStream fos = new FileOutputStream(tempFile);
+//					getAppUI().getSpreadsheet_dao().getSpreadsheet().write(fos);
+//					fos.flush();
+//					fos.close();
+					saveSheetToDB();
 										
 					File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
 					FileInputStream fis2 = new FileInputStream(tempFile2);
@@ -470,7 +573,7 @@ public class SheetView extends CustomComponent implements View {
 
 	private void saveSheetToDB(){
 		 XLToDB obj = new XLToDB();
-         obj.insertRecords();
+         obj.insertRecordsFromSheet();
          
 	}
 	
