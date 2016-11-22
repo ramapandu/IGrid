@@ -17,10 +17,10 @@ import java.util.*;
 //        public static final String INSERT_RECORDS = "INSERT INTO test(ID, NAME, VALUE1, VALUE2, VALUE3, VALUE4, VALUE5) VALUES(?,?,?,?,?,?,?)";
 //        private static String GET_COUNT = "SELECT COUNT(*) FROM test";
     	 
-    	public static final String INSERT_RECORDS = "INSERT INTO test4(`Country`,`City`,`test`,`County`,`State`,`Device_Type`,`Vendor`,`KUG`,`LOB`,`Cust_PoC`) VALUES(?,?,?,?,?,?,?,?,?,?)";
+    	public static final String INSERT_RECORDS = "INSERT INTO test4(`Country`,`City`,`test`,`County`,`State`,`Vendor`,`KUG`,`LOB`,`Cust_PoC`) VALUES(?,?,?,?,?,?,?,?,?)";
 //    	public static final String INSERT_RECORDS="";
     	private static String DELETE_RECORDS = "TRUNCATE test4";
-    	private static String GET_RECORDS = "SELECT COUNT(*) FROM test4";
+    	private static String GET_COUNT = "SELECT COUNT(*) FROM test4";
            private static String GET_TABLE = "SELECT * FROM test4";
 
 
@@ -126,6 +126,7 @@ import java.util.*;
                   con = DBHelper.getConnection();
                   System.out.println("Connection :: ["+con+"]");
                   prepStmt = con.prepareStatement(DELETE_RECORDS);
+                  prepStmt.execute();
                   stmt = con.createStatement();
                   System.out.println("All Records are Updated");
                   prepStmt = con.prepareStatement(INSERT_RECORDS);
@@ -162,9 +163,9 @@ import java.util.*;
                               Iterator<Cell> cellIterator = row.cellIterator();
                               System.out.println("Cell Iterator invoked..! ");
                               int index=1;
-                                      while(cellIterator.hasNext()  &index<=10) {
-
-                                              Cell cell = cellIterator.next();
+                                      while(cellIterator.hasNext()) {
+                                    	  Cell cell = cellIterator.next();
+                                    	  if(cell.getStringCellValue()!=null){                                             
 //                                              System.out.println("getting cell value..! ");
 
                                               switch(cell.getCellType()) { 
@@ -177,9 +178,7 @@ import java.util.*;
                                                       break;
                                               }
                                               index++;
-
-
-
+                                      }
                                       }
                       //we can execute the statement before reading the next row
                       prepStmt.executeUpdate();
