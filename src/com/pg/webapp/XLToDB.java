@@ -205,19 +205,11 @@ import java.util.*;
 //                  int count = 0;
             	  DbConnection DBHelper=new DbConnection();
                   con = DBHelper.getConnection();
-                  System.out.println("Connection :: ["+con+"]");
+                  System.out.println("Connection :: ["+con+"]"+" Established");
 //                  prepStmt = con.prepareStatement(GET_TABLE);
                   stmt = con.createStatement();
                   ResultSet result = stmt.executeQuery(GET_TABLE);
-//                  while(result.next()) {
-//
-////                      int val = result.getInt(1);
-////                      System.out.println(result.getString(1));
-////                      System.out.println(result.getString(2));
-////                      System.out.println(result.getString(3));
-////                      count = val+1;
-//
-//                  } 
+
                   return result;
               }
               SpreadsheetDemoUI getAppUI() {

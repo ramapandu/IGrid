@@ -33,6 +33,7 @@ import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeListener;
 import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeEvent;
 import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeListener;
 import com.vaadin.addon.spreadsheet.SpreadsheetFilterTable;
+import com.vaadin.addon.spreadsheet.action.InsertNewRowAction;
 import com.vaadin.data.Item;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -411,30 +412,11 @@ public class SheetView extends CustomComponent implements View {
 	                for(int x = 1; x <= coll.size(); x++){
 	                	
 	                   Item item=logTable.getItem(iterate.next());
-	                    
-//	                   System.out.println(item.getItemProperty(1).getValue().toString());
-//	                   System.out.println(item.getItemProperty(2).getValue().toString());
-//	                   System.out.println(item.getItemProperty(3).getValue().toString());
 	                    						
 						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("User").getValue().toString());
 						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Action").getValue().toString());
 						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Date").getValue().toString());
-						
-//						logSheet.createRow(i);
-//						System.out.println("sheet "+logSheet.getRow(i).getCell(0).getStringCellValue());
-//						System.out.println("table "+logTable.getContainerDataSource().getItem(k).getItemProperty(1).getValue().toString());
-						
-						
-//						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(1).getValue().toString());
-//						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(2).getValue().toString());
-//						logSheet.getRow(i).getCell(0).setCellValue(logTable.getContainerDataSource().getItem(x).getItemProperty(3).getValue().toString());
-								
-//						logSheet.getRow(i+1).getCell(0).setCellValue(logTable.getItem(k).getItemProperty(1).getValue().toString());
-//						logSheet.getRow(i+1).getCell(1).setCellValue(logTable.getItem(k).getItemProperty(2).getValue().toString());
-//						logSheet.getRow(i+1).getCell(2).setCellValue(logTable.getItem(k).getItemProperty(3).getValue().toString());
-//						if(i<k)
-						
-	               				
+											               				
 					}
 				
 					FileOutputStream fos2 = new FileOutputStream(tempFile2);
@@ -443,36 +425,7 @@ public class SheetView extends CustomComponent implements View {
 					fos2.close();
 					
 					Notification.show("Spreadsheet saved !!!");
-					
-//					logBook.close();
-//					Byte[] bytes;
-//					ByteArrayInputStream bis=new ByteArrayInputStream(lo
-//					logBook.write(fos2);
-//					fos2.flush();
-//					fos2.close();
-//					ExcelExport excelExport;
-					
-//					File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
-//					org.apache.poi.openxml4j.opc.OPCPackage opc = 
-//							   org.apache.poi.openxml4j.opc.OPCPackage.open(tempFile2);
-//							org.apache.poi.xssf.usermodel.XSSFWorkbook wb =
-//							   new org.apache.poi.xssf.usermodel.XSSFWorkbook(opc);
-//							java.io.FileOutputStream fileOut = new java.io.FileOutputStream(tempFile2);
-//							wb.write(fileOut);
-//							opc.close();
-//							fileOut.close(); 
-							
-//							FileInputStream fis = null; 
-//							try { 
-//							  fis = new FileInputStream(inputFilePath ); 
-//							  XSSFWorkbook workbook = new XSSFWorkbook(fis); 
-					
-					// ------getAppUI().getLogTable().setLogTable(logTable);
-					// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					// spreadsheet.write(bos);
-					// byte[] data = bos.toByteArray();
-					// bos.close();
-					
+										
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -508,7 +461,7 @@ public class SheetView extends CustomComponent implements View {
 		spreadsheet.setHeight("550px");
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(spreadsheet);
 		getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
-		changeHeaderColor(spreadsheet.getActiveSheet());
+		changeHeaderColor();
         
 		spreadsheet.addSheetChangeListener(new SheetChangeListener() {
 
@@ -518,7 +471,7 @@ public class SheetView extends CustomComponent implements View {
 			public void onSheetChange(SheetChangeEvent event) {
 				spreadsheet.unregisterTable(table);
 				getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
-				changeHeaderColor(spreadsheet.getActiveSheet());
+				changeHeaderColor();
 			}
 		});
 		spreadsheet.addCellValueChangeListener(new CellValueChangeListener() {
@@ -534,39 +487,58 @@ public class SheetView extends CustomComponent implements View {
 	}
 	
 	private Spreadsheet openSheetFromDB() throws ClassNotFoundException, SQLException{
-//		saveSheetToDB();----------TEST
+//		saveSheetToDB();     //----------TEST
 		 XLToDB obj = new XLToDB();
+//		 obj.insertRecords();
 		ResultSet rs= obj.getRecords();
-		
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
 		
 		Spreadsheet s=new Spreadsheet();
 		s.setSizeFull();
-		s.setHeight("550px");
-		s.createNewSheet("TEST2", 100, columnsNumber);
+		s.setHeight("400px");
+		
+//		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
 		int i=0;
-//		System.out.println(s);
-//		System.out.println(s.getActiveSheet());
-//		System.out.println(s.getActiveSheet().getRow(i));
 		while(rs.next()){
 			s.getActiveSheet().createRow(i);
 			for(int j=1;j<columnsNumber;j++){
-				System.out.println(s.getActiveSheet().getRow(i));
-				System.out.println(rs.getString(j));
-//				s.getActiveSheet().getRow(i).createCell(j).se
+//				System.out.println(s.getActiveSheet().getRow(i));
+//				System.out.println(rs.getString(j));
 		s.getActiveSheet().getRow(i).createCell(j-1).setCellValue(rs.getString(j));
 		 
-//		 System.out.println(s.getActiveSheet().getRow(i).getCell(j).getStringCellValue());
 			}
 		i++;
 		}
 		s.refreshAllCellValues();
+//		s.setDefaultColumnWidth(110);
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
-		getPopUpButtonsForSheet(s.getActiveSheet());
-		changeHeaderColor(s.getActiveSheet());
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(110);
+		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
+//		changeHeaderColor();
 //		getAppUI().getCurrent().getPage().reload();
+		
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
+
+			private static final long serialVersionUID = -5585430837302587763L;
+
+			@Override
+			public void onSheetChange(SheetChangeEvent event) {
+				getAppUI().getSpreadsheet_dao().getSpreadsheet().unregisterTable(table);
+				getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
+				changeHeaderColor();
+			}
+		});
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().addCellValueChangeListener(new CellValueChangeListener() {
+		
+			private static final long serialVersionUID = 1334987428943711253L;
+                @Override
+				public void onCellValueChange(CellValueChangeEvent event) {
+               updateLogTable(event);
+			}
+		});
+		
 		return s;
 		
 	}
@@ -603,55 +575,22 @@ public class SheetView extends CustomComponent implements View {
         }					
 	}
 	
-	private void changeHeaderColor(Sheet activeSheet) {
+	private void changeHeaderColor() {
 		
 		//TEST
 		CellStyle headerStyle = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook().createCellStyle();
 		
-//		headerStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-//		headerStyle.setFillForegroundColor(new XSSFColor(style.getProperty(CssColorProperty.BACKGROUND)));
-//		headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
-	
-//		headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-//		headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-//				Font font = spreadsheet.getWorkbook().createFont();
-//				font.setColor(IndexedColors.BLACK.getIndex());
-//				headerStyle.setFont(font);
-//				activeSheet.getRow(1).getCell(1).setCellStyle(headerStyle);
-//				activeSheet.getRow(0).setRowStyle(headerStyle);
-				
-//				Iterator<Cell> iterator = activeSheet.getRow(0).cellIterator();
-//				activeSheet.getRow(0).getRowStyle()
-//				while(iterator.hasNext() && iterator.next().getStringCellValue()!=""){
-//					Cell cell=iterator.
-//					cell.setCellStyle(headerStyle);
-//				}
-//				while(iactiveSheet.getRow(0).getLastCellNum()){
-//				Cell cell;
-				for (int i=0;i<(activeSheet.getRow(0).getLastCellNum()-1);i++) {
+				for (int i=0;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()-1);i++) {
 //					cell=activeSheet.getRow(0).getCell(i);
-					if(activeSheet.getRow(0).getCell(i).getStringCellValue()!=null){
+					if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue()!=null){
 					
-//					System.out.println(activeSheet.getRow(0).getCell(i).getRichStringCellValue());
-//					System.out.println(activeSheet.getRow(0).getCell(i).getCellStyle().toString());
-//					System.out.println(activeSheet.getRow(0).getCell(i).getCellStyle().getFillBackgroundColor());
-//					activeSheet.getRow(0).getCell(i).setCellStyle(headerStyle); 
-					activeSheet.getRow(0).getCell(i).getCellStyle().setFillForegroundColor(IndexedColors.BLACK.getIndex());
+						getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getCellStyle().setFillForegroundColor(IndexedColors.BLACK.getIndex());
 //					activeSheet.getRow(0).getCell(i).getCellStyle().setFillBackgroundColor(IndexedColors.RED.getIndex());
 					
-//				System.out.println(activeSheet.getRow(0).getCell(i).getCellStyle().getFillBackgroundColor());
-//				activeSheet.getRow(0).getCell(i).getCellStyle();
-//				activeSheet.getRow(0).getCell(i).getCellStyle();
-//				System.out.println(activeSheet.getRow(0).getCell(i).getCellStyle().getFillBackgroundColor());
 					}
 				}
 //				}
 				
-//				CellStyle headerStyle = spreadsheet.getWorkbook().createCellStyle();	
-//		headerStyle.setFillBackgroundColor(IndexedColors.BLUE.getIndex());
-//		System.out.println(activeSheet.getRow(0).getCell(0).getCellStyle().getFillBackgroundColorColor());
-//		activeSheet.getRow(1).getCell(2).setCellStyle(headerStyle);
-//		System.out.println(activeSheet.getRow(0).getCell(0).getCellStyle());
 		
 		
 	}
@@ -660,16 +599,16 @@ public class SheetView extends CustomComponent implements View {
 			throws NullPointerException, ArrayIndexOutOfBoundsException {
 
 		try {
-			 Row r = sheet.getRow(sheet.getFirstRowNum());
+			 Row r = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getFirstRowNum());
 			 int lastColumnNum=0;
 			 lastColumnNum= r.getLastCellNum()-1;
 
 			range = new CellRangeAddress(0, sheet.getLastRowNum(), 0, lastColumnNum);
-			System.out.println("FIRSTROW:"+sheet.getFirstRowNum() + " LASTROW:"
-					+ sheet.getLastRowNum() + " LASTCOLUMN:" + lastColumnNum+" SHEET:"+sheet.getSheetName());
+//			System.out.println("FIRSTROW:"+sheet.getFirstRowNum() + " LASTROW:"
+//					+ sheet.getLastRowNum() + " LASTCOLUMN:" + lastColumnNum+" SHEET:"+sheet.getSheetName());
 			// Create a table in the range
 			 table = new SpreadsheetFilterTable(
-					getAppUI().getSpreadsheet_dao().getSpreadsheet(), sheet, range);
+					getAppUI().getSpreadsheet_dao().getSpreadsheet(), getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet(), range);
 			table.getPopupButtons();
 	
 		} catch (ArrayIndexOutOfBoundsException e) {
