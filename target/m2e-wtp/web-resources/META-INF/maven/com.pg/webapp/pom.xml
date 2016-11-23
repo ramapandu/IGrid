@@ -27,6 +27,12 @@
 	</licenses>
 
 	<repositories>
+	<repository>
+        <id>osssonatype</id>
+        <name>OSS Sonatype</name>
+        <url>https://repo1.maven.org/maven2/</url>
+        <layout>default</layout>
+    </repository>
 		<repository>
 			<id>vaadin-addons</id>
 			<url>http://maven.vaadin.com/vaadin-addons</url>
@@ -125,8 +131,15 @@
         <version>4.2.1.BUILD-SNAPSHOT</version>
     </dependency-->
    <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
-
-
+<!--
+  Is a proper subset of "guava"?   So far, appears yes.
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+-->
 	</dependencies>
   
   <build>

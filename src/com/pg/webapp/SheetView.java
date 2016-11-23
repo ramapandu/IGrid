@@ -15,25 +15,21 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.vaadin.addon.charts.model.style.Style;
+import com.pg.webapp.symja.InEqualityExample;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeListener;
 import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeEvent;
 import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeListener;
 import com.vaadin.addon.spreadsheet.SpreadsheetFilterTable;
-import com.vaadin.addon.spreadsheet.action.InsertNewRowAction;
 import com.vaadin.data.Item;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -48,11 +44,13 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -68,13 +66,15 @@ public class SheetView extends CustomComponent implements View {
 	VerticalLayout rootLayout;
 	Spreadsheet spreadsheet;
 	HorizontalLayout topBar, sheetLayout;
-	Button editButton, saveButton, downlaodButton, exportButton,settingsButton;
+	Button editButton, saveButton, downlaodButton, exportButton,settingsButton,symjaSubmitButton;
 	File testSheetFile;
 	Table logTable;
 	Workbook logBook;
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
 	String fileName="test.xlsx";
+	TextArea symjaInputArea;
+	Label symjaText;
 	
 
 	private TabSheet tabSheet;
@@ -169,7 +169,13 @@ public class SheetView extends CustomComponent implements View {
 		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		try {
 //			tabSheet.addTab(openSheet(), "Sheet");------TEST
-			tabSheet.addTab(openSheetFromDB(), "Sheet");
+			VerticalLayout vl=new VerticalLayout();
+			
+			
+			vl.addComponent(openSheetFromDB());
+			vl.addComponent(getSymjaComponent());
+//			tabSheet.addTab(openSheetFromDB(), "Sheet");-----TEST for symja
+			tabSheet.addTab(vl, "Sheet");
 			getLogSheet();
 			logTable.setPageLength(logTable.size());
 
@@ -179,6 +185,41 @@ public class SheetView extends CustomComponent implements View {
 		}
 
 		return tabSheet;
+	}
+
+	private Component getSymjaComponent() {
+		HorizontalLayout hl=new HorizontalLayout();
+		hl.setHeight("150px");
+		symjaInputArea=new TextArea();
+		symjaInputArea.setValue("TEST");
+		symjaInputArea.setHeight("150px");
+		symjaInputArea.setWidth("100%");
+		hl.addComponent(symjaInputArea);
+		hl.addComponent(getSymjaSubmitButton());
+		symjaText=new Label("Symja");
+		symjaText.setImmediate(true);
+//		InEqualityExample ex=new InEqualityExample();
+//		symjaText.setValue(ex.caliculate());
+		hl.addComponent(symjaText);
+		return hl;
+	}
+	
+	private Button getSymjaSubmitButton() {
+		symjaSubmitButton = new Button("CALICULATE");
+		symjaSubmitButton.addStyleName("topbarbuttons");
+		symjaSubmitButton.setImmediate(true);
+		symjaSubmitButton.setEnabled(true);
+		symjaSubmitButton.addClickListener(new ClickListener(){
+
+			private static final long serialVersionUID = -8158301975694183254L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				InEqualityExample ex=new InEqualityExample();
+				symjaText.setValue(ex.caliculate(symjaInputArea.getValue()));
+			}
+		});
+		return symjaSubmitButton;
 	}
 
 	private Table getLogSheet() throws IOException {
@@ -539,6 +580,7 @@ public class SheetView extends CustomComponent implements View {
 			}
 		});
 		
+		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
 		return s;
 		
 	}

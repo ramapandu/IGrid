@@ -80,6 +80,7 @@ public class LoginView extends CustomComponent implements View {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
+
 						
 					}
 

@@ -17,6 +17,30 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/spring-security-web-3.0.5.RELEASE.jar/spring-security-web-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/spring-security-web-3.0.5.RELEASE.jar/spring-security-web-3.0.5.RELEASE.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/ext.bundle.math.symja_jas-1.2.3-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/apfloat-1.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/hipparchus-core-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/hipparchus-fft-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/hipparchus-fitting-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/hipparchus-optim-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/hipparchus-stat-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/jsr305.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/Lab4Math-2.0.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/log4j-over-slf4j-1.7.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/symja_java8-2016-11-22/symja_java8-2016-11-22/lib/symja_java8-2016-11-22.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

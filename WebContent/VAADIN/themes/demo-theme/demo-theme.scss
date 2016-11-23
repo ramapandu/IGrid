@@ -66,6 +66,13 @@ $v-gradient: false;
     width: 1350px;
     color: blue;
 } 
+
+//test for header color
+.demo-theme .v-spreadsheet .top-right-pane .ch {
+    top: 0;
+    margin-left: 0 !important;
+    color: blue;
+}
  
  .v-label-labelwhite{
     color: blueviolet;
