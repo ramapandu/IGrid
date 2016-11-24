@@ -54,6 +54,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.pg.webapp.symja.*;
 
 public class SheetView extends CustomComponent implements View {
 
@@ -73,8 +74,8 @@ public class SheetView extends CustomComponent implements View {
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
 	String fileName="test.xlsx";
-	TextArea symjaInputArea;
-	Label symjaText;
+//	TextArea symjaInputArea;
+//	Label symjaText;
 	
 
 	private TabSheet tabSheet;
@@ -173,7 +174,8 @@ public class SheetView extends CustomComponent implements View {
 			
 			
 			vl.addComponent(openSheetFromDB());
-			vl.addComponent(getSymjaComponent());
+			SymjaUI symja=new SymjaUI();
+			vl.addComponent(symja.getSymjaComponent());
 //			tabSheet.addTab(openSheetFromDB(), "Sheet");-----TEST for symja
 			tabSheet.addTab(vl, "Sheet");
 			getLogSheet();
@@ -187,40 +189,40 @@ public class SheetView extends CustomComponent implements View {
 		return tabSheet;
 	}
 
-	private Component getSymjaComponent() {
-		HorizontalLayout hl=new HorizontalLayout();
-		hl.setHeight("150px");
-		symjaInputArea=new TextArea();
-		symjaInputArea.setValue("TEST");
-		symjaInputArea.setHeight("150px");
-		symjaInputArea.setWidth("100%");
-		hl.addComponent(symjaInputArea);
-		hl.addComponent(getSymjaSubmitButton());
-		symjaText=new Label("Symja");
-		symjaText.setImmediate(true);
-//		InEqualityExample ex=new InEqualityExample();
-//		symjaText.setValue(ex.caliculate());
-		hl.addComponent(symjaText);
-		return hl;
-	}
+//	private Component getSymjaComponent() {
+//		HorizontalLayout hl=new HorizontalLayout();
+//		hl.setHeight("150px");
+//		symjaInputArea=new TextArea();
+//		symjaInputArea.setValue("TEST");
+//		symjaInputArea.setHeight("150px");
+//		symjaInputArea.setWidth("100%");
+//		hl.addComponent(symjaInputArea);
+//		hl.addComponent(getSymjaSubmitButton());
+//		symjaText=new Label("Symja");
+//		symjaText.setImmediate(true);
+////		InEqualityExample ex=new InEqualityExample();
+////		symjaText.setValue(ex.caliculate());
+//		hl.addComponent(symjaText);
+//		return hl;
+//	}
 	
-	private Button getSymjaSubmitButton() {
-		symjaSubmitButton = new Button("CALICULATE");
-		symjaSubmitButton.addStyleName("topbarbuttons");
-		symjaSubmitButton.setImmediate(true);
-		symjaSubmitButton.setEnabled(true);
-		symjaSubmitButton.addClickListener(new ClickListener(){
-
-			private static final long serialVersionUID = -8158301975694183254L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				InEqualityExample ex=new InEqualityExample();
-				symjaText.setValue(ex.caliculate(symjaInputArea.getValue()));
-			}
-		});
-		return symjaSubmitButton;
-	}
+//	private Button getSymjaSubmitButton() {
+//		symjaSubmitButton = new Button("CALICULATE");
+//		symjaSubmitButton.addStyleName("topbarbuttons");
+//		symjaSubmitButton.setImmediate(true);
+//		symjaSubmitButton.setEnabled(true);
+//		symjaSubmitButton.addClickListener(new ClickListener(){
+//
+//			private static final long serialVersionUID = -8158301975694183254L;
+//
+//			@Override
+//			public void buttonClick(ClickEvent event) {
+//				InEqualityExample ex=new InEqualityExample();
+//				symjaText.setValue(ex.caliculate(symjaInputArea.getValue()));
+//			}
+//		});
+//		return symjaSubmitButton;
+//	}
 
 	private Table getLogSheet() throws IOException {
 		FileInputStream fs = new FileInputStream(
@@ -260,7 +262,7 @@ public class SheetView extends CustomComponent implements View {
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp-v5");
+				getUI().getPage().setLocation("/webapp");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
@@ -541,16 +543,26 @@ public class SheetView extends CustomComponent implements View {
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
-		int i=0;
+//		int i=1;
+		ResultSetMetaData meta = rs.getMetaData();
+		s.getActiveSheet().createRow(0);
+		for(int j=1;j<columnsNumber;j++){
+			s.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
+		}
+		
+		int row=1;
 		while(rs.next()){
-			s.getActiveSheet().createRow(i);
+			s.getActiveSheet().createRow(row);
 			for(int j=1;j<columnsNumber;j++){
 //				System.out.println(s.getActiveSheet().getRow(i));
 //				System.out.println(rs.getString(j));
-		s.getActiveSheet().getRow(i).createCell(j-1).setCellValue(rs.getString(j));
+				if(row==0)
+					s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(meta.getColumnLabel(j));
+				else
+		            s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(rs.getString(j));
 		 
 			}
-		i++;
+			row++;
 		}
 		s.refreshAllCellValues();
 //		s.setDefaultColumnWidth(110);
@@ -580,7 +592,7 @@ public class SheetView extends CustomComponent implements View {
 			}
 		});
 		
-		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
+//		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
 		return s;
 		
 	}
@@ -606,6 +618,7 @@ public class SheetView extends CustomComponent implements View {
           element =cr.getCellRefParts();
           r = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(Integer.valueOf(element[1])-1);
           c=null;
+          if(r!=null)
         	c=r.getCell(new Integer(cr.getCol()));
         
 			Date d = new Date();

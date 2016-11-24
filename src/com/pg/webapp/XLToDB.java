@@ -165,7 +165,7 @@ import java.util.*;
                               int index=1;
                                       while(cellIterator.hasNext()) {
                                     	  Cell cell = cellIterator.next();
-                                    	  if(cell.getStringCellValue()!=null){                                             
+                                    	  if(cell.getRichStringCellValue()!=null){                                             
 //                                              System.out.println("getting cell value..! ");
 
                                               switch(cell.getCellType()) { 

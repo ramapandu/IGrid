@@ -15,7 +15,7 @@ public class InEqualityExample {
 	String javaForm;
 		public String caliculate(String s){
 			try {
-				Config.PARSER_USE_LOWERCASE_SYMBOLS = true;
+//				Config.PARSER_USE_LOWERCASE_SYMBOLS = true;
 
 				ExprEvaluator util = new ExprEvaluator(false,100);
 				
@@ -24,7 +24,8 @@ public class InEqualityExample {
 				// Note: single character identifiers are case sensistive
 				// (the "D()" function input must be written as upper case character)
 				//String javaForm = util.toJavaForm("D(sin(x)*cos(x),x)");
-				javaForm=util.toJavaForm(s);
+//				javaForm=util.toJavaForm(s);
+				System.out.println("Input:"+s);
 				result=util.evaluate(s);
 //				// prints: D(Times(Sin(x),Cos(x)),x)
 //				System.out.println(javaForm.toString());
@@ -86,7 +87,7 @@ public class InEqualityExample {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			System.out.println(result);
+			System.out.println("Symja Res:"+result);
 		return result.toString();
 	}
 }
