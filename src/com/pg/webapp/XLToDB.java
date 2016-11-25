@@ -157,7 +157,7 @@ import java.util.*;
                   Iterator ite = sheet.rowIterator();
                   System.out.println("Row Iterator invoked..! ");
 
-                     while(ite.hasNext()) {
+                  while(ite.hasNext()) {
                               Row row = (Row) ite.next(); 
                               System.out.println("Row value fetched..! ");
                               Iterator<Cell> cellIterator = row.cellIterator();
