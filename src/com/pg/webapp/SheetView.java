@@ -546,14 +546,14 @@ public class SheetView extends CustomComponent implements View {
 //		int i=1;
 		ResultSetMetaData meta = rs.getMetaData();
 		s.getActiveSheet().createRow(0);
-		for(int j=1;j<columnsNumber;j++){
+		for(int j=1;j<=columnsNumber;j++){
 			s.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
 		}
 		
 		int row=1;
 		while(rs.next()){
 			s.getActiveSheet().createRow(row);
-			for(int j=1;j<columnsNumber;j++){
+			for(int j=1;j<=columnsNumber;j++){
 //				System.out.println(s.getActiveSheet().getRow(i));
 //				System.out.println(rs.getString(j));
 				if(row==0)

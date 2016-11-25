@@ -1,6 +1,5 @@
 package com.pg.webapp;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -124,7 +123,8 @@ public class SymjaUI extends SymjaInterface {
 //		ArrayList<String> C=new ArrayList();
 		InEqualityExample iEx=new InEqualityExample();
 		for (int i=1;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getLastRowNum()-1);i++) {
-			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
+			if(activeSheet.getRow(i)!=null)
+			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
 		}
         
 //        activeSheet.getRow(0).getCell(cellIndex).setCellValue(newValue.getValue().toString());	
