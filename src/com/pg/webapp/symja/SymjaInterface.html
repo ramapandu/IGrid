@@ -5,16 +5,17 @@
   <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
  </head> 
  <body> 
-  <vaadin-horizontal-layout spacing width-full height="316px"> 
-   <vaadin-form-layout width="700px" height="316px" _id="symjaContainer"> 
-    <vaadin-combo-box input-prompt="select Col A" _id="colA"></vaadin-combo-box> 
-    <vaadin-combo-box input-prompt="Select Col B" _id="colB"></vaadin-combo-box> 
-    <vaadin-combo-box input-prompt="Select Result Col" _id="colC"></vaadin-combo-box> 
-    <vaadin-text-area columns="20" text-change-event-mode="eager" rows="3" _id="formulaInputArea"></vaadin-text-area> 
-    <vaadin-button plain-text _id="symjaSubmitButton">
-      CALICULATE 
-    </vaadin-button> 
-   </vaadin-form-layout> 
+  <vaadin-horizontal-layout spacing width="786px" height="291px"> 
+   <vaadin-horizontal-split-panel locked width="776px" height="335px" _id="hSplitPanel"> 
+    <vaadin-form-layout width="373px" height="285px" _id="symjaContainer"> 
+     <vaadin-text-area columns="20" text-change-event-mode="eager" rows="3" height="127px" _id="formulaInputArea"></vaadin-text-area> 
+     <vaadin-combo-box input-prompt="Select Result Col" _id="colC"></vaadin-combo-box> 
+     <vaadin-button plain-text _id="symjaSubmitButton">
+       CALICULATE 
+     </vaadin-button> 
+    </vaadin-form-layout> 
+    <vaadin-text-area width="379px" height="239px" _id="renderArea"></vaadin-text-area> 
+   </vaadin-horizontal-split-panel> 
   </vaadin-horizontal-layout>  
  </body>
 </html>

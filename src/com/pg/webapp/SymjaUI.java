@@ -21,8 +21,8 @@ public class SymjaUI extends SymjaInterface {
 	private static final long serialVersionUID = -6005778405260648961L;
 	private SheetView sheetView;
 	Sheet activeSheet;
-	TextArea symjaInputArea;
-	Label symjaText;
+//	TextArea symjaInputArea;
+//	Label symjaText;
 	HorizontalLayout hl;
 	public SymjaUI() {
 	initComponents();
@@ -34,7 +34,7 @@ public class SymjaUI extends SymjaInterface {
 	private void initComponents() {
 		hl=new HorizontalLayout();
 		hl.setHeight("330px");
-		hl.addComponent(symjaContainer);
+		hl.addComponent(hSplitPanel);
 //		hl.setSizeFull();
 		symjaSubmitButton.addStyleName("topbarbuttons");
 		symjaSubmitButton.setImmediate(true);
@@ -96,17 +96,17 @@ public class SymjaUI extends SymjaInterface {
             Cell cell = cellIterator.next();
 //            if(cell.getCellType()==Cell.CELL_TYPE_STRING){ 
                 String text = cell.getStringCellValue();
-                 if (colA.getValue().equals(text)) {
-                    cellIndexA=cell.getColumnIndex();
-                    System.out.println(cellIndexA);
-                   
-                 }
-                 else if (colB.getValue().equals(text)) {
-                     cellIndexB=cell.getColumnIndex();
-                     System.out.println(cellIndexB);
-                    
-                  }
-                 else if (colC.getValue().equals(text)) {
+//                 if (colA.getValue().equals(text)) {
+//                    cellIndexA=cell.getColumnIndex();
+//                    System.out.println(cellIndexA);
+//                   
+//                 }
+//                 else if (colB.getValue().equals(text)) {
+//                     cellIndexB=cell.getColumnIndex();
+//                     System.out.println(cellIndexB);
+//                    
+//                  }
+                 if (colC.getValue().equals(text)) {
                      cellIndexC=cell.getColumnIndex();
                      System.out.println(cellIndexC);
                     
@@ -124,7 +124,8 @@ public class SymjaUI extends SymjaInterface {
 		InEqualityExample iEx=new InEqualityExample();
 		for (int i=1;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getLastRowNum()-1);i++) {
 			if(activeSheet.getRow(i)!=null)
-			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
+//			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
+				 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate(getConvertedFormula()));
 		}
         
 //        activeSheet.getRow(0).getCell(cellIndex).setCellValue(newValue.getValue().toString());	
@@ -133,15 +134,27 @@ public class SymjaUI extends SymjaInterface {
 		
 	}
 
+	private String  getConvertedFormula(){
+		String convFormula = null;
+		String s=formulaInputArea.getValue().toString();
+		String a="A",b="";
+		if(s.contains(a)){
+			s.replace(a, b);
+		}
+		
+		return convFormula;
+	}
+	
+	
 private void populateColumns() {
 	//COLUMN A
 	for (int i=0;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()-1);i++) {
 //		System.out.println(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
 		if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue()!=null){
 		
-			colA.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
-			
-			colB.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
+//			colA.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
+//			
+//			colB.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
 			
 			colC.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
 		

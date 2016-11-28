@@ -102,7 +102,7 @@ public class SheetView extends CustomComponent implements View {
 	public HorizontalLayout getSheetLayout() throws ClassNotFoundException, SQLException {
 		sheetLayout = new HorizontalLayout();
 		sheetLayout.setSizeFull();
-		sheetLayout.setHeight("100%");
+		sheetLayout.setHeight("80%");
 		sheetLayout.addComponent(getTabSheet());
 		sheetLayout.addStyleName("sheetlayout");
 		return sheetLayout;
@@ -501,7 +501,7 @@ public class SheetView extends CustomComponent implements View {
 		fis.close();
 		
 		spreadsheet.setSizeFull();
-		spreadsheet.setHeight("550px");
+		spreadsheet.setHeight("450px");
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(spreadsheet);
 		getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
 		changeHeaderColor();
@@ -539,7 +539,7 @@ public class SheetView extends CustomComponent implements View {
 		
 		Spreadsheet s=new Spreadsheet();
 		s.setSizeFull();
-		s.setHeight("400px");
+		s.setHeight("350px");
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
