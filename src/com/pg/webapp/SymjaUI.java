@@ -130,10 +130,10 @@ public class SymjaUI extends SymjaInterface {
 		for (int i=1;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getLastRowNum()-1);i++) {
 			if(activeSheet.getRow(i)!=null){
 //			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
-				
+				result="";
 				result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
 				activeSheet.getRow(i).getCell(cellIndexC).setCellValue(result);
-				result="";
+				
 			}
 		}
         
@@ -159,11 +159,11 @@ public class SymjaUI extends SymjaInterface {
 		//TEST----------------
 		List<String> operatorList = new ArrayList<String>();
 		 List<String> operandList = new ArrayList<String>();
-		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/(){[]}", true);
+		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/(){[]}sqrt0123456789", true);
 		 while (st.hasMoreTokens()) {
 		    String token = st.nextToken();
 
-		    if ("+-/*(){[]}".contains(token)) {
+		    if ("+-/*(){[]}'sqrt'0123456789".contains(token)) {
 		       operatorList.add(token);
 		    } else {
 		       operandList.add(token);
@@ -177,11 +177,13 @@ public class SymjaUI extends SymjaInterface {
 		 for(int i=0;i<operandList.size();i++){
 			 cr=new CellReference(operandList.get(i));
 //			 System.out.println("CR:"+formulaString.contains(operandList.get(i))+" "+i);
+			 if(operandList.size()>0){
 			 if(formulaString.contains(operandList.get(i)) && row.getCell(cr.getCol())!=null){
 				 cellValue=row.getCell(cr.getCol()).getStringCellValue();
 				 System.out.println("Cell:" + cellValue);
 				 formulaString=formulaString.replace(operandList.get(i),cellValue);
 			 }
+		 }
 		 }
 		 System.out.println("Converted Formula:" + formulaString);
 		return formulaString;
