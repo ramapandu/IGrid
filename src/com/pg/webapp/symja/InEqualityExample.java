@@ -16,7 +16,7 @@ public class InEqualityExample {
 		public String caliculate(String s){
 			try {
 //				Config.PARSER_USE_LOWERCASE_SYMBOLS = true;
-
+              res="";
 				ExprEvaluator util = new ExprEvaluator(false,100);
 				
 				
@@ -27,6 +27,8 @@ public class InEqualityExample {
 //				javaForm=util.toJavaForm(s);
 				System.out.println("Input:"+s);
 				result=util.evaluate(s);
+				res=result.toString();
+//				result=util.evaluate(javaForm);
 //				// prints: D(Times(Sin(x),Cos(x)),x)
 //				System.out.println(javaForm.toString());
 //				res.concat(javaForm).toString();
@@ -87,7 +89,7 @@ public class InEqualityExample {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			System.out.println("Symja Res:"+result);
-		return result.toString();
+			System.out.println("Symja Res:"+res);
+		return res;
 	}
 }

@@ -1,19 +1,23 @@
 package com.pg.webapp;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 
+import com.ibm.icu.util.StringTokenizer;
 import com.pg.webapp.symja.InEqualityExample;
 import com.pg.webapp.symja.SymjaInterface;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 
 public class SymjaUI extends SymjaInterface {
@@ -122,10 +126,15 @@ public class SymjaUI extends SymjaInterface {
 //		ArrayList<String> B=new ArrayList();
 //		ArrayList<String> C=new ArrayList();
 		InEqualityExample iEx=new InEqualityExample();
+		String result="";
 		for (int i=1;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getLastRowNum()-1);i++) {
-			if(activeSheet.getRow(i)!=null)
+			if(activeSheet.getRow(i)!=null){
 //			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
-				 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate(getConvertedFormula()));
+				
+				result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
+				activeSheet.getRow(i).getCell(cellIndexC).setCellValue(result);
+				result="";
+			}
 		}
         
 //        activeSheet.getRow(0).getCell(cellIndex).setCellValue(newValue.getValue().toString());	
@@ -134,15 +143,79 @@ public class SymjaUI extends SymjaInterface {
 		
 	}
 
-	private String  getConvertedFormula(){
-		String convFormula = null;
-		String s=formulaInputArea.getValue().toString();
-		String a="A",b="";
-		if(s.contains(a)){
-			s.replace(a, b);
-		}
+	private String  getConvertedFormula(Row row){
+//		String convFormula = "";
+		String formulaString=formulaInputArea.getValue();
+		String s=formulaInputArea.getValue();
+		 System.out.println("Formula:"+s);
+//		String a="A",b="2345";
+////		CellReference cr=new  CellReference("");
+//		
+//		if(s.contains(a)){
+//			convFormula=s.replace(a,b);
+//			  System.out.println("Converted String:"+convFormula);
+//		}
 		
-		return convFormula;
+		//TEST----------------
+		List<String> operatorList = new ArrayList<String>();
+		 List<String> operandList = new ArrayList<String>();
+		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/(){[]}", true);
+		 while (st.hasMoreTokens()) {
+		    String token = st.nextToken();
+
+		    if ("+-/*(){[]}".contains(token)) {
+		       operatorList.add(token);
+		    } else {
+		       operandList.add(token);
+		    }
+		 }
+
+		 System.out.println("Operators:" + operatorList);
+		 System.out.println("Operands:" + operandList);
+		 CellReference cr;
+		 String cellValue;
+		 for(int i=0;i<operandList.size();i++){
+			 cr=new CellReference(operandList.get(i));
+//			 System.out.println("CR:"+formulaString.contains(operandList.get(i))+" "+i);
+			 if(formulaString.contains(operandList.get(i)) && row.getCell(cr.getCol())!=null){
+				 cellValue=row.getCell(cr.getCol()).getStringCellValue();
+				 System.out.println("Cell:" + cellValue);
+				 formulaString=formulaString.replace(operandList.get(i),cellValue);
+			 }
+		 }
+		 System.out.println("Converted Formula:" + formulaString);
+		return formulaString;
+	}
+	
+	private void evaluate(){
+		FormulaEvaluator evaluator = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+		// suppose your formula is in B3
+		CellReference cellReference = new CellReference("B3"); 
+		Row row = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(cellReference.getRow());
+		Cell cell = row.getCell(cellReference.getCol()); 
+       String cellValue;
+		if (cell!=null) {
+		    switch (evaluator.evaluateFormulaCell(cell)) {
+		        case Cell.CELL_TYPE_BOOLEAN:
+		            System.out.println(cell.getBooleanCellValue());
+		            break;
+		        case Cell.CELL_TYPE_NUMERIC:
+		            System.out.println(cell.getNumericCellValue());
+		            break;
+		        case Cell.CELL_TYPE_STRING:
+		            System.out.println(cell.getStringCellValue());
+		            break;
+		        case Cell.CELL_TYPE_BLANK:
+		            break;
+		        case Cell.CELL_TYPE_ERROR:
+		            System.out.println(cell.getErrorCellValue());
+		            break;
+
+		        // CELL_TYPE_FORMULA will never occur
+		        case Cell.CELL_TYPE_FORMULA: 
+		            break;
+		    }
+		}
 	}
 	
 	
