@@ -7,6 +7,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.declarative.Design;
 
@@ -27,7 +28,7 @@ public class SymjaInterface extends HorizontalLayout {
 	protected TextArea formulaInputArea;
 	protected ComboBox colC;
 	protected Button symjaSubmitButton;
-	protected TextArea renderArea;
+	protected Panel renderPanel;
 
 	public SymjaInterface() {
 		Design.read(this);

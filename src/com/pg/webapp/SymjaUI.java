@@ -1,22 +1,45 @@
 package com.pg.webapp;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.scilab.forge.jlatexmath.ParseException;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 import com.ibm.icu.util.StringTokenizer;
 import com.pg.webapp.symja.InEqualityExample;
 import com.pg.webapp.symja.SymjaInterface;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 
@@ -31,10 +54,25 @@ public class SymjaUI extends SymjaInterface {
 	public SymjaUI() {
 	initComponents();
 	populateColumns();
+	generateRendering();
 	sheetView=getAppUI().getSheetView();
 	activeSheet=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet();
 	}
 	
+	private void generateRendering() {
+formulaInputArea.addValueChangeListener(new ValueChangeListener() {
+	
+	@Override
+	public void valueChange(ValueChangeEvent event) {
+		InEqualityExample iEx=new InEqualityExample();
+//		renderArea.setValue(iEx.toJavaForm(formulaInputArea.getValue()));
+		renderFormula();
+	}
+});
+		
+		
+	}
+
 	private void initComponents() {
 		hl=new HorizontalLayout();
 		hl.setHeight("330px");
@@ -49,9 +87,7 @@ public class SymjaUI extends SymjaInterface {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				InEqualityExample ex=new InEqualityExample();
 //				symjaText.setValue(ex.caliculate(symjaInputArea.getValue()));
-				
 			applyFormula();
 			}
 		});
@@ -159,11 +195,11 @@ public class SymjaUI extends SymjaInterface {
 		//TEST----------------
 		List<String> operatorList = new ArrayList<String>();
 		 List<String> operandList = new ArrayList<String>();
-		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/(){[]}sqrt0123456789", true);
+		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/%(){[]}0123456789^$#sqrtabcdefghijklmnopuvwxyz", true);
 		 while (st.hasMoreTokens()) {
 		    String token = st.nextToken();
 
-		    if ("+-/*(){[]}'sqrt'0123456789".contains(token)) {
+		    if ("+-*/%(){[]}0123456789^$#sqrtabcdefghijklmnopuvwxyz".contains(token)) {
 		       operatorList.add(token);
 		    } else {
 		       operandList.add(token);
@@ -237,7 +273,63 @@ private void populateColumns() {
 	}	
 	
 }
-	
+
+private void renderFormula() throws ParseException{
+
+	  {
+	        try {
+	            // get the text
+	         //-------   String latex = this.latexSource.getText();
+String latex=formulaInputArea.getValue();
+	            // create a formula
+	            TeXFormula formula = new TeXFormula(latex);
+
+	            // render the formla to an icon of the same size as the formula.
+	            TeXIcon icon = formula
+	                    .createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+
+	            // insert a border
+	            icon.setInsets(new Insets(5, 5, 5, 5));
+
+	            // now create an actual image of the rendered equation
+	            BufferedImage image = new BufferedImage(icon.getIconWidth(),
+	                    icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+	            Graphics2D g2 = image.createGraphics();
+	            g2.setColor(Color.white);
+	            g2.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
+	            JLabel jl = new JLabel();
+	            jl.setForeground(new Color(0, 0, 0));
+	            icon.paintIcon(jl, g2, 0, 0);
+	      
+	                 Image img=new Image("",createStreamResource(image));
+	                 HorizontalLayout hl=new HorizontalLayout();
+	                 
+	         hl.addComponent(img);
+	            renderPanel.setContent(hl);
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+	                    JOptionPane.INFORMATION_MESSAGE);
+	        }
+	  }
+		
+}
+private StreamResource createStreamResource(final BufferedImage bi) {
+    return new StreamResource(new StreamSource() {
+        @Override
+        public InputStream getStream() {
+
+            try {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ImageIO.write(bi, "png", bos);
+                return new ByteArrayInputStream(bos.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }, "dateImage.png");
+}
 
 SpreadsheetDemoUI getAppUI() {
 	return (SpreadsheetDemoUI) UI.getCurrent();

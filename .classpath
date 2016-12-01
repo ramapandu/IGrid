@@ -42,5 +42,7 @@
 	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/commons-math3-3.6.1-bin/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/mxparser-v.3.0.0-bin-only/mxparser-v.3.0.0-bin-only/mxparser-bin-java-jdk.1.8/mxparser.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rampa/Downloads/jlatexmath-1.0.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

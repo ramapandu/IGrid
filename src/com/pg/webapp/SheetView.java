@@ -539,7 +539,7 @@ Notification.show("Export function is not Availble now");
 		
 		Spreadsheet s=new Spreadsheet();
 		s.setSizeFull();
-		s.setHeight("350px");
+		s.setHeight("450px");
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
