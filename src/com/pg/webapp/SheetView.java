@@ -97,7 +97,7 @@ public class SheetView extends CustomComponent implements View {
 
 		rootLayout.addComponent(getTopBar());
 		FormulaBar fb=new FormulaBar();
-		rootLayout.addComponent(fb.getFormulaBar());
+		rootLayout.addComponent(fb.getMenuBar());
 		rootLayout.addComponent(getSheetLayout());
 	}
 
