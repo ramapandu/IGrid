@@ -96,6 +96,8 @@ public class SheetView extends CustomComponent implements View {
 	private void CreateUI() throws ClassNotFoundException, SQLException {
 
 		rootLayout.addComponent(getTopBar());
+		FormulaBar fb=new FormulaBar();
+		rootLayout.addComponent(fb.getFormulaBar());
 		rootLayout.addComponent(getSheetLayout());
 	}
 
@@ -116,7 +118,8 @@ public class SheetView extends CustomComponent implements View {
 		getDownloadButton();
 		getExportButton();
 		getSettingsButton();
-		final GridLayout grid = new GridLayout(6, 1);
+		getBrowseBox();
+		final GridLayout grid = new GridLayout(6, 2);
 		// grid.setWidth(400, Unit.PIXELS);
 		grid.setHeight(35, Unit.PIXELS);
 
@@ -151,6 +154,10 @@ public class SheetView extends CustomComponent implements View {
 		// topBar.setComponentAlignment(logoutButton, Alignment.BOTTOM_RIGHT);
 		topBar.addComponent(grid);
 		return topBar;
+	}
+
+	private void getBrowseBox() {
+		
 	}
 
 	@SuppressWarnings("unchecked")

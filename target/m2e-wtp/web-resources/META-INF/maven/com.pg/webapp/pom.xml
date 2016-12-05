@@ -140,6 +140,12 @@
 		</dependency>
 		
 -->
+
+<!-- dependency>
+    <groupId>org.scilab.forge</groupId>
+    <artifactId>jlatexmath</artifactId>
+    <version>1.0.2</version>
+</dependency-->
 	</dependencies>
   
   <build>
