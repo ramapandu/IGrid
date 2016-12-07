@@ -54,6 +54,8 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.pg.webapp.database.JdbcInsertFileTwo;
+import com.pg.webapp.database.JdbcReadFile;
 import com.pg.webapp.symja.*;
 
 public class SheetView extends CustomComponent implements View {
@@ -67,13 +69,13 @@ public class SheetView extends CustomComponent implements View {
 	VerticalLayout rootLayout;
 	Spreadsheet spreadsheet;
 	HorizontalLayout topBar, sheetLayout;
-	Button editButton, saveButton, downlaodButton, exportButton,settingsButton,symjaSubmitButton;
+	Button editButton, saveButton, downlaodButton, importButton,exportButton,settingsButton,symjaSubmitButton;
 	File testSheetFile;
 	Table logTable;
 	Workbook logBook;
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
-	String fileName="test.xlsx";
+	String fileName="sheet.xlsx";
 //	TextArea symjaInputArea;
 //	Label symjaText;
 	
@@ -116,10 +118,11 @@ public class SheetView extends CustomComponent implements View {
 		getLogoutButton();
 		getSaveButton();
 		getDownloadButton();
+		getImportButton();
 		getExportButton();
 		getSettingsButton();
 		getBrowseBox();
-		final GridLayout grid = new GridLayout(6, 2);
+		final GridLayout grid = new GridLayout(7, 1);
 		// grid.setWidth(400, Unit.PIXELS);
 		grid.setHeight(35, Unit.PIXELS);
 
@@ -131,14 +134,17 @@ public class SheetView extends CustomComponent implements View {
 
 		grid.addComponent(downlaodButton, 2, 0);
 		grid.setComponentAlignment(downlaodButton, Alignment.TOP_RIGHT);
+		
+		grid.addComponent(importButton, 3, 0);
+		grid.setComponentAlignment(importButton, Alignment.TOP_RIGHT);
 
-		grid.addComponent(exportButton, 3, 0);
+		grid.addComponent(exportButton, 4, 0);
 		grid.setComponentAlignment(exportButton, Alignment.TOP_RIGHT);
 
-		grid.addComponent(logoutButton, 4, 0);
+		grid.addComponent(logoutButton, 5, 0);
 		grid.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
 		
-		grid.addComponent(settingsButton,5,0);
+		grid.addComponent(settingsButton,6,0);
 		grid.setComponentAlignment(settingsButton, Alignment.TOP_RIGHT);
 
 		topBar.setPrimaryStyleName("topbar");
@@ -180,7 +186,10 @@ public class SheetView extends CustomComponent implements View {
 			VerticalLayout vl=new VerticalLayout();
 			
 			
-			vl.addComponent(openSheetFromDB());
+//			vl.addComponent(openSheetFromDB());
+			
+			vl.addComponent(openSheetFromDBTwo());
+			
 			SymjaUI symja=new SymjaUI();
 			vl.addComponent(symja.getSymjaComponent());
 //			tabSheet.addTab(openSheetFromDB(), "Sheet");-----TEST for symja
@@ -196,40 +205,7 @@ public class SheetView extends CustomComponent implements View {
 		return tabSheet;
 	}
 
-//	private Component getSymjaComponent() {
-//		HorizontalLayout hl=new HorizontalLayout();
-//		hl.setHeight("150px");
-//		symjaInputArea=new TextArea();
-//		symjaInputArea.setValue("TEST");
-//		symjaInputArea.setHeight("150px");
-//		symjaInputArea.setWidth("100%");
-//		hl.addComponent(symjaInputArea);
-//		hl.addComponent(getSymjaSubmitButton());
-//		symjaText=new Label("Symja");
-//		symjaText.setImmediate(true);
-////		InEqualityExample ex=new InEqualityExample();
-////		symjaText.setValue(ex.caliculate());
-//		hl.addComponent(symjaText);
-//		return hl;
-//	}
-	
-//	private Button getSymjaSubmitButton() {
-//		symjaSubmitButton = new Button("CALICULATE");
-//		symjaSubmitButton.addStyleName("topbarbuttons");
-//		symjaSubmitButton.setImmediate(true);
-//		symjaSubmitButton.setEnabled(true);
-//		symjaSubmitButton.addClickListener(new ClickListener(){
-//
-//			private static final long serialVersionUID = -8158301975694183254L;
-//
-//			@Override
-//			public void buttonClick(ClickEvent event) {
-//				InEqualityExample ex=new InEqualityExample();
-//				symjaText.setValue(ex.caliculate(symjaInputArea.getValue()));
-//			}
-//		});
-//		return symjaSubmitButton;
-//	}
+
 
 	private Table getLogSheet() throws IOException {
 		FileInputStream fs = new FileInputStream(
@@ -285,10 +261,31 @@ public class SheetView extends CustomComponent implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-Notification.show("Export function is not Availble now");
+                  Notification.show("Export function is not Availble now");
+//                  JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
+//                  jif.importFile();
 			}
 		});
 		return exportButton;
+	}
+	
+	private Button getImportButton() {
+		importButton = new Button("IMPORT");
+		importButton.addStyleName("topbarbuttons");
+		importButton.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = -7614812368402111788L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+                  Notification.show("Importing File ...");
+                  JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
+//                  File file = new File();
+                  jif.importFile(filePath,
+    						fileName);
+			}
+		});
+		return importButton;
 	}
 
 	private Button getDownloadButton() {
@@ -536,21 +533,25 @@ Notification.show("Export function is not Availble now");
 		return spreadsheet;
 	}
 	
-	private Spreadsheet openSheetFromDB() throws ClassNotFoundException, SQLException{
+	private Spreadsheet openSheetFromDB() throws ClassNotFoundException, SQLException, IOException{
 //		saveSheetToDB();     //----------TEST
-		 XLToDB obj = new XLToDB();
+		 XLToDB obj = new XLToDB();  //----TEST1
 //		 obj.insertRecords();
-		ResultSet rs= obj.getRecords();
+		ResultSet rs= obj.getRecords(); 
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
 		
+		 JdbcReadFile jrf=new JdbcReadFile();
+		 
 		Spreadsheet s=new Spreadsheet();
+//		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
 		s.setSizeFull();
 		s.setHeight("450px");
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
 //		int i=1;
+		//----------------------------TEST1-----------------------
 		ResultSetMetaData meta = rs.getMetaData();
 		s.getActiveSheet().createRow(0);
 		for(int j=1;j<=columnsNumber;j++){
@@ -572,6 +573,7 @@ Notification.show("Export function is not Availble now");
 			row++;
 		}
 		s.refreshAllCellValues();
+		//-------------------TEST1--------------------
 //		s.setDefaultColumnWidth(110);
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(110);
@@ -603,6 +605,81 @@ Notification.show("Export function is not Availble now");
 		return s;
 		
 	}
+	
+	
+	private Spreadsheet openSheetFromDBTwo() throws ClassNotFoundException, SQLException, IOException{
+//		saveSheetToDB();     //----------TEST
+		 XLToDB obj = new XLToDB();  //----TEST1
+//		 obj.insertRecords();
+//		ResultSet rs= obj.getRecords(); ----TEST1
+//		ResultSetMetaData rsmd = rs.getMetaData();------TEST1
+//		int columnsNumber = rsmd.getColumnCount();--------TEST1
+		
+		 JdbcReadFile jrf=new JdbcReadFile();
+		 
+//		Spreadsheet s=new Spreadsheet();----TEST1
+		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
+		s.setSizeFull();
+		s.setHeight("450px");
+		
+//		s.createNewSheet("TEST2", 100, columnsNumber);
+		s.setActiveSheetIndex(0);
+//		int i=1;
+		//----------------------------TEST1-----------------------
+//		ResultSetMetaData meta = rs.getMetaData();
+//		s.getActiveSheet().createRow(0);
+//		for(int j=1;j<=columnsNumber;j++){
+//			s.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
+//		}
+//		
+//		int row=1;
+//		while(rs.next()){
+//			s.getActiveSheet().createRow(row);
+//			for(int j=1;j<=columnsNumber;j++){
+////				System.out.println(s.getActiveSheet().getRow(i));
+////				System.out.println(rs.getString(j));
+//				if(row==0)
+//					s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(meta.getColumnLabel(j));
+//				else
+//		            s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(rs.getString(j));
+//		 
+//			}
+//			row++;
+//		}
+//		s.refreshAllCellValues();
+		//-------------------TEST1--------------------
+//		s.setDefaultColumnWidth(110);
+		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(100);
+		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
+//		changeHeaderColor();
+//		getAppUI().getCurrent().getPage().reload();
+		
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
+
+			private static final long serialVersionUID = -5585430837302587763L;
+
+			@Override
+			public void onSheetChange(SheetChangeEvent event) {
+				getAppUI().getSpreadsheet_dao().getSpreadsheet().unregisterTable(table);
+				getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
+				changeHeaderColor();
+			}
+		});
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().addCellValueChangeListener(new CellValueChangeListener() {
+		
+			private static final long serialVersionUID = 1334987428943711253L;
+                @Override
+				public void onCellValueChange(CellValueChangeEvent event) {
+               updateLogTable(event);
+			}
+		});
+		
+//		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
+		return s;
+		
+	}
+
 
 	private void saveSheetToDB(){
 		 XLToDB obj = new XLToDB();

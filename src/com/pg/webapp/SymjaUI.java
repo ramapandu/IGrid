@@ -70,7 +70,6 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 	}
 });
 		
-		
 	}
 
 	private void initComponents() {
@@ -167,7 +166,8 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 			if(activeSheet.getRow(i)!=null){
 //			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
 				result="";
-				result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
+			//---TEST-HEADERNAMES----	result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
+				result=iEx.caliculate(getConvertedFormula2(activeSheet.getRow(i)));
 				activeSheet.getRow(i).getCell(cellIndexC).setCellValue(result);
 				
 			}
@@ -195,6 +195,46 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 		//TEST----------------
 		List<String> operatorList = new ArrayList<String>();
 		 List<String> operandList = new ArrayList<String>();
+		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz", true);
+		 while (st.hasMoreTokens()) {
+		    String token = st.nextToken();
+
+		    if ("+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz".contains(token)) {
+		       operatorList.add(token);
+		    } else {
+		       operandList.add(token);
+		    }
+		 }
+
+		 System.out.println("Operators:" + operatorList);
+		 System.out.println("Operands:" + operandList);
+		 CellReference cr;
+		 String cellValue = null;
+		 for(int i=0;i<operandList.size();i++){
+			 cr=new CellReference(operandList.get(i));
+//			 System.out.println("CR:"+formulaString.contains(operandList.get(i))+" "+i);---OLD
+			 if(operandList.size()>0){
+			 if(formulaString.contains(operandList.get(i)) && row.getCell(cr.getCol())!=null){
+				 row.getCell(cr.getCol()).setCellType(Cell.CELL_TYPE_STRING);
+//				 if(row.getCell(cr.getCol()).getCellType()==Cell.CELL_TYPE_NUMERIC)--------OLD
+//				 cellValue=row.getCell(cr.getCol()).getNumericCellValue();-----------------OLD
+//				 else if(row.getCell(cr.getCol()).getCellType()==Cell.CELL_TYPE_STRING)----OLD
+					 cellValue=row.getCell(cr.getCol()).getStringCellValue();
+				 System.out.println("Cell:" + cellValue);
+				 formulaString=formulaString.replace(operandList.get(i),cellValue);
+			 }
+		 }
+		 }
+		 System.out.println("Converted Formula:" + formulaString);
+		return formulaString;
+	}
+	
+	private String  getConvertedFormula2(Row row){
+		String formulaString=formulaInputArea.getValue();
+		String s=formulaInputArea.getValue();
+		 System.out.println("Formula:"+s);
+		List<String> operatorList = new ArrayList<String>();
+		 List<String> operandList = new ArrayList<String>();
 		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/%(){[]}0123456789^$#sqrtabcdefghijklmnopuvwxyz", true);
 		 while (st.hasMoreTokens()) {
 		    String token = st.nextToken();
@@ -209,17 +249,28 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 		 System.out.println("Operators:" + operatorList);
 		 System.out.println("Operands:" + operandList);
 		 CellReference cr;
-		 String cellValue;
+		 String cellValue = null;
 		 for(int i=0;i<operandList.size();i++){
-			 cr=new CellReference(operandList.get(i));
-//			 System.out.println("CR:"+formulaString.contains(operandList.get(i))+" "+i);
+//			 cr=new CellReference(operandList.get(i));
+//			 cr=new CellReference(operandList.get(i));
 			 if(operandList.size()>0){
-			 if(formulaString.contains(operandList.get(i)) && row.getCell(cr.getCol())!=null){
-				 cellValue=row.getCell(cr.getCol()).getStringCellValue();
+			 if(formulaString.contains(operandList.get(i))){
+					for (int k=0;k<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()-1);k++) {
+						if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0)!=null){
+						if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i)!=null){
+//							colC.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
+						if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(k).getStringCellValue().contains(operandList.get(i)))
+							cellValue=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(k).getStringCellValue();
+						}
+						}
+					}
+//				 row.getCell(cr.getCol()).setCellType(Cell.CELL_TYPE_STRING);
+//					 cellValue=row.getCell(cr.getCol()).getStringCellValue();
 				 System.out.println("Cell:" + cellValue);
 				 formulaString=formulaString.replace(operandList.get(i),cellValue);
+				 }
 			 }
-		 }
+//		 }
 		 }
 		 System.out.println("Converted Formula:" + formulaString);
 		return formulaString;
@@ -261,14 +312,14 @@ private void populateColumns() {
 	//COLUMN A
 	for (int i=0;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()-1);i++) {
 //		System.out.println(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
-		if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue()!=null){
-		
+		if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0)!=null){
+		if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i)!=null){
 //			colA.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
 //			
 //			colB.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
 			
 			colC.addItem(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue());
-		
+		}
 		}
 	}	
 	
