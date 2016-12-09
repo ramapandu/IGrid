@@ -367,7 +367,12 @@ String latex=formulaInputArea.getValue();
 }
 private StreamResource createStreamResource(final BufferedImage bi) {
     return new StreamResource(new StreamSource() {
-        @Override
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1606243370705307890L;
+
+		@Override
         public InputStream getStream() {
 
             try {

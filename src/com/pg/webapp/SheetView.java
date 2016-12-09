@@ -576,7 +576,7 @@ public class SheetView extends CustomComponent implements View {
 		//-------------------TEST1--------------------
 //		s.setDefaultColumnWidth(110);
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
-		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(110);
+//		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(110);
 		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
 //		changeHeaderColor();
 //		getAppUI().getCurrent().getPage().reload();
