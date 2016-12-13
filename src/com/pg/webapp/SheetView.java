@@ -75,7 +75,7 @@ public class SheetView extends CustomComponent implements View {
 	Workbook logBook;
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
-	String fileName="sheet.xlsx";
+	String fileName="sheet22.xlsx";
 //	TextArea symjaInputArea;
 //	Label symjaText;
 	
@@ -280,9 +280,12 @@ public class SheetView extends CustomComponent implements View {
 			public void buttonClick(ClickEvent event) {
                   Notification.show("Importing File ...");
                   JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
-//                  File file = new File();
-                  jif.importFile(filePath,
-    						fileName);
+                  try {
+					jif.importFile(filePath,fileName);
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		return importButton;
@@ -624,6 +627,7 @@ public class SheetView extends CustomComponent implements View {
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
 		s.setActiveSheetIndex(0);
+		
 //		int i=1;
 		//----------------------------TEST1-----------------------
 //		ResultSetMetaData meta = rs.getMetaData();
@@ -650,11 +654,18 @@ public class SheetView extends CustomComponent implements View {
 		//-------------------TEST1--------------------
 //		s.setDefaultColumnWidth(110);
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
-		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(100);
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(30);
 		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
 //		changeHeaderColor();
 //		getAppUI().getCurrent().getPage().reload();
 		
+		//FREEZING FIRST ROW
+				Row r = s.getActiveSheet().getRow(s.getActiveSheet().getFirstRowNum());
+				 int lastColumnNum=0;
+				 lastColumnNum= r.getLastCellNum()-1;
+				s.createFreezePane(1,0);
+				System.out.println("First row is frozen");
+//				System.out.println(s.getActiveSheet().get);
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
 
 			private static final long serialVersionUID = -5585430837302587763L;

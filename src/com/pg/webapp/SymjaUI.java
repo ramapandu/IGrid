@@ -8,25 +8,32 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
+import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.matheclipse.core.basic.Config;
+import org.matheclipse.core.eval.EvalEngine;
+import org.matheclipse.core.eval.MathMLUtilities;
+import org.matheclipse.parser.client.SyntaxError;
+import org.matheclipse.parser.client.math.MathException;
 import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.ibm.icu.util.StringTokenizer;
 import com.pg.webapp.symja.InEqualityExample;
@@ -43,6 +50,12 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 
+import net.sourceforge.jeuclid.MathMLParserSupport;
+import net.sourceforge.jeuclid.MutableLayoutContext;
+import net.sourceforge.jeuclid.context.LayoutContextImpl;
+import net.sourceforge.jeuclid.context.Parameter;
+import net.sourceforge.jeuclid.converter.Converter;
+
 public class SymjaUI extends SymjaInterface {
 	
 	private static final long serialVersionUID = -6005778405260648961L;
@@ -50,7 +63,10 @@ public class SymjaUI extends SymjaInterface {
 	Sheet activeSheet;
 //	TextArea symjaInputArea;
 //	Label symjaText;
-	HorizontalLayout hl;
+	HorizontalLayout hl,symjaLayout;
+	 Document doc;
+	 BufferedImage bi;
+		Image img;
 	public SymjaUI() {
 	initComponents();
 	populateColumns();
@@ -66,17 +82,26 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 	public void valueChange(ValueChangeEvent event) {
 		InEqualityExample iEx=new InEqualityExample();
 //		renderArea.setValue(iEx.toJavaForm(formulaInputArea.getValue()));
-		renderFormula();
+//		renderFormula();--------TEST-------
+		try {
+			renderFormulaForMathML();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 });
 		
 	}
 
 	private void initComponents() {
-		hl=new HorizontalLayout();
-		hl.setHeight("330px");
-		hl.addComponent(hSplitPanel);
-//		hl.setSizeFull();
+		symjaLayout=new HorizontalLayout();
+		symjaLayout.setHeight("330px");
+		symjaLayout.addComponent(hSplitPanel);
+//		symjaLayout.setSizeFull();
 		symjaSubmitButton.addStyleName("topbarbuttons");
 		symjaSubmitButton.setImmediate(true);
 		symjaSubmitButton.setEnabled(true);
@@ -104,7 +129,7 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 	}
 
 	Component getSymjaComponent() {
-		return hl;
+		return symjaLayout;
 	}
 	
 //	private Button getSymjaSubmitButton() {
@@ -167,7 +192,7 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 //			 activeSheet.getRow(i).getCell(cellIndexC).setCellValue(iEx.caliculate( activeSheet.getRow(i).getCell(cellIndexA).toString()+formulaInputArea.getValue().toString()+ activeSheet.getRow(i).getCell(cellIndexB).toString()));
 				result="";
 			//---TEST-HEADERNAMES----	result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
-				result=iEx.caliculate(getConvertedFormula2(activeSheet.getRow(i)));
+				result=iEx.caliculate(getConvertedFormula(activeSheet.getRow(i)));
 				activeSheet.getRow(i).getCell(cellIndexC).setCellValue(result);
 				
 			}
@@ -195,11 +220,11 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 		//TEST----------------
 		List<String> operatorList = new ArrayList<String>();
 		 List<String> operandList = new ArrayList<String>();
-		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz", true);
+		 StringTokenizer st = new StringTokenizer(formulaString, "+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz0123456789", true);
 		 while (st.hasMoreTokens()) {
 		    String token = st.nextToken();
 
-		    if ("+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz".contains(token)) {
+		    if ("+-*/%(){[]}^$#sqrtabcdefghijklmnopuvwxyz0123456789".contains(token)) {
 		       operatorList.add(token);
 		    } else {
 		       operandList.add(token);
@@ -323,6 +348,67 @@ private void populateColumns() {
 		}
 	}	
 	
+}
+
+private String convertToMathML(){
+	StringWriter stw = null;
+	try { 
+		// false -> distinguish between upper- and lowercase identifiers:
+		Config.PARSER_USE_LOWERCASE_SYMBOLS = false;
+		// false -> switch to Mathematica syntax mode:
+		EvalEngine engine = new EvalEngine(false);
+		// don't use m: prefix for mathml tags / don't print MathML header information
+		MathMLUtilities mathUtil = new MathMLUtilities(engine, false, false);
+
+		
+//		 stw = new StringWriter();
+//		mathUtil.toMathML("MatrixForm[{{a,b},{c,d}}]", stw);
+//		// print: <math><mrow><mo>(</mo><mtable><mtr><mtd><mi>a</mi></mtd><mtd><mi>b</mi></mtd></mtr><mtr><mtd><mi>c</mi></mtd><mtd><mi>d</mi></mtd></mtr></mtable><mo>)</mo></mrow></math>
+//		System.out.println(stw.toString());
+		
+		 stw = new StringWriter();
+//		mathUtil.toMathML("Sum[i, {i,1,n}]", stw);      ----TEST
+		mathUtil.toMathML(formulaInputArea.getValue(), stw); 
+		// print: <math><mrow><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>i</mi></mrow></math> 
+		System.out.println(stw.toString());
+		
+//		 stw = new StringWriter();
+//		mathUtil.toMathML("MatrixForm[{{a,b},{c,d}}]", stw);
+		// print: <math><mrow><mo>(</mo><mtable><mtr><mtd><mi>a</mi></mtd><mtd><mi>b</mi></mtd></mtr><mtr><mtd><mi>c</mi></mtd><mtd><mi>d</mi></mtd></mtr></mtable><mo>)</mo></mrow></math>
+//		System.out.println(stw.toString());
+	} catch (SyntaxError e) {
+		// catch Symja parser errors here
+		System.out.println(e.getMessage());
+	} catch (MathException me) {
+		// catch Symja math errors here
+		System.out.println(me.getMessage());
+	} catch (Exception e) {
+		e.printStackTrace();
+	}	
+
+	return stw.toString();
+}
+
+private void renderFormulaForMathML() throws SAXException, ParserConfigurationException, IOException{
+	doc=null;
+	bi=null;
+	img=null;
+//	hl=null;
+ doc = MathMLParserSupport.parseString(convertToMathML());
+			             MutableLayoutContext params = new LayoutContextImpl(
+			                    LayoutContextImpl.getDefaultLayoutContext());
+			            params.setParameter(Parameter.MATHSIZE, 35f);
+			            bi = Converter.getInstance().render(doc, params,
+			                    BufferedImage.TYPE_3BYTE_BGR);
+	
+//	JEuclidView jv=new JEuclidView();
+//	BufferedImage image = null;
+   img=new Image("",createStreamResource(bi));
+    hl=new HorizontalLayout();
+    
+    hl.addComponent(img);
+    hl.markAsDirty();
+    renderPanel.setContent(hl);
 }
 
 private void renderFormula() throws ParseException{

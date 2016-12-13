@@ -2,13 +2,14 @@ package com.pg.webapp.database;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -44,25 +45,28 @@ public class Excel {
                    }
                    }
     showExcelData(sheetData);
-    @SuppressWarnings("unused")
-    HashMap<String, String> tableFields = new HashMap();
-          for (int i=0; i<sheetData.size();i++){
-            List list = (List) sheetData.get(i);
-              for (int j=0; j<list.size(); j++){
-                Cell cell = (Cell) list.get(j);
-                if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                    System.out.print(cell.getNumericCellValue());
-                    } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-                    System.out.print(cell.getRichStringCellValue());
-                    } else if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
-                    System.out.print(cell.getBooleanCellValue());
-                    }
-                    if (j < list.size() - 1) {
-                    System.out.print(", ");
-                    }}}
+//    @SuppressWarnings("unused")
+//    HashMap<String, String> tableFields = new HashMap();
+         
                     }
     private static void showExcelData(List sheetData) {
+    
+    	 for (int i=0; i<sheetData.size();i++){
+             List list = (List) sheetData.get(i);
+               for (int j=0; j<list.size(); j++){
+                 Cell cell = (Cell) list.get(j);
+                 if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                     System.out.print(cell.getNumericCellValue());
+                     } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                     System.out.print(cell.getRichStringCellValue());
+                     } else if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+                     System.out.print(cell.getBooleanCellValue());
+                     }
+                     if (j < list.size() - 1) {
+                     System.out.print(", ");
+                     }}}
     }
+    
     @SuppressWarnings("unchecked")
     private HashMap parseExcelData (List sheetData){
         HashMap<String,Integer> tableFields = new HashMap();
@@ -73,69 +77,102 @@ public class Excel {
     }
         return tableFields; 
     }
-    @SuppressWarnings({ "unchecked", "unchecked", "unchecked", "unchecked" })
-    private String getCreateTable(String tablename, HashMap<String, Integer> tableFields){
+    private static String getCreateTable(Connection con, String tablename,
+            LinkedHashMap<String, Integer> tableFields) {
         Iterator iter = tableFields.keySet().iterator();
-        String str="";
+        Iterator cells = tableFields.keySet().iterator();
+        String str = "";
         String[] allFields = new String[tableFields.size()];
-        String createTableStr = null;
         int i = 0;
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             String fieldName = (String) iter.next();
             Integer fieldType = (Integer) tableFields.get(fieldName);
-            switch (fieldType){
+
+            switch (fieldType) {
             case Cell.CELL_TYPE_NUMERIC:
-                str=fieldName + "INTEGER";
+                str = fieldName + " INTEGER";
                 break;
             case Cell.CELL_TYPE_STRING:
-                str= fieldName + "VARCHAR(255)";
+                str = fieldName + " VARCHAR(255)";
                 break;
             case Cell.CELL_TYPE_BOOLEAN:
-                str=fieldName + "INTEGER";
+                str = fieldName + " INTEGER";
+                break;
+            default:
+                str = "";
                 break;
             }
-            allFields[i++]= str;
+            allFields[i++] = str;
         }
+        try {
+            Statement stmt = con.createStatement();
+
+            try {
+                String all = org.apache.commons.lang3.StringUtils.join(
+                        allFields, ",");
+                String createTableStr = "CREATE TABLE IF NOT EXISTS "
+                        + tablename + " (" + all + ")";
+
+                System.out.println("Create a new table in the database");
+                stmt.executeUpdate(createTableStr);
+            } catch (SQLException e) {
+                System.out.println("SQLException: " + e.getMessage());
+                System.out.println("SQLState:     " + e.getSQLState());
+                System.out.println("VendorError:  " + e.getErrorCode());
+            }
+        } catch (Exception e) 
         {
-            try
-            {
-            Class.forName( "com.mysql.jdbc.Driver" ).newInstance();
-            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/igrid","root", "123456");
-            Statement  stmt = con.createStatement();
-            try
-            {
-            System.out.println( "Use the new database..." );
-            stmt.executeUpdate( "USE igrid;" );
-            }
-            catch( SQLException e )
-            {
-            System.out.println( "SQLException: " + e.getMessage() );
-            System.out.println( "SQLState:     " + e.getSQLState() );
-            System.out.println( "VendorError:  " + e.getErrorCode() );
-            }
-            try
-            {
-               createTableStr = "CREATE TABLE" + createTableStr
-                   + "(" + org.apache.commons.lang3.StringUtils.join(allFields,
-                   ",") + ")";
-                System.out.println( "Create a new table in the database" );
-                stmt.executeUpdate( createTableStr );
-                }
-                catch( SQLException e )
-                {
-                System.out.println( "SQLException: " + e.getMessage() );
-                System.out.println( "SQLState:     " + e.getSQLState() );
-                System.out.println( "VendorError:  " + e.getErrorCode() );
-                }
-                }
-                catch( Exception e )
-                {
-                System.out.println( ((SQLException) e).getSQLState() );
-                System.out.println( e.getMessage() );
-                e.printStackTrace();
-                }
-                }
-        return createTableStr;
+            System.out.println( ((SQLException) e).getSQLState() );
+            System.out.println( e.getMessage() );
+            e.printStackTrace();
+        }
+        return str;
     }
+
+    private static void fillTable(Connection con, String fieldname,
+            LinkedHashMap[] tableData) {
+        for (int row = 0; row < tableData.length; row++) {
+            LinkedHashMap<String, Integer> rowData = tableData[row];
+            Iterator iter = rowData.entrySet().iterator();
+            String str;
+            String[] tousFields = new String[rowData.size()];
+            int i = 0;
+            while (iter.hasNext()) {
+                Map.Entry pairs = (Map.Entry) iter.next();
+                Integer fieldType = (Integer) pairs.getValue();
+                String fieldValue = (String) pairs.getKey();
+                switch (fieldType) {
+                case Cell.CELL_TYPE_NUMERIC:
+                    str = fieldValue;
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                    str = "\'" + fieldValue + "\'";
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                    str = fieldValue;
+                    break;
+                default:
+                    str = "";
+                    break;
+                }
+                tousFields[i++] = str;
+            }
+
+            try {
+                Statement stmt = con.createStatement();
+                String all = org.apache.commons.lang3.StringUtils.join(
+                        tousFields, ",");
+                String sql = "INSERT INTO " + fieldname + " VALUES (" + all
+                        + ")";
+                stmt.executeUpdate(sql);
+            } catch (SQLException e) {
+                System.out.println("SQLException: " + e.getMessage());
+                System.out.println("SQLState: " + e.getSQLState());
+                System.out.println("VendorError: " + e.getErrorCode());
+            }
+
+        }
+
+        }
 }
     
