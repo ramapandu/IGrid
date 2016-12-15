@@ -103,7 +103,7 @@ public class SheetView extends CustomComponent implements View {
 		rootLayout.setExpandRatio(topBar,1f);
 		FormulaBar fb=new FormulaBar();
 		rootLayout.addComponent(fb.getMenuBar());
-		rootLayout.setExpandRatio(fb.getMenuBar(),2f);
+//		rootLayout.setExpandRatio(fb.getMenuBar(),2f);
 		getSheetLayout();
 		rootLayout.addComponent(sheetLayout);
 		rootLayout.setExpandRatio(sheetLayout,3f);
@@ -115,7 +115,9 @@ public class SheetView extends CustomComponent implements View {
 	public HorizontalLayout getSheetLayout() throws ClassNotFoundException, SQLException, OpenXML4JException, URISyntaxException {
 		sheetLayout = new HorizontalLayout();
 		sheetLayout.setSizeFull();
+		sheetLayout.setSizeUndefined();
 		sheetLayout.setHeight("80%");
+		sheetLayout.setWidth("100%");
 		sheetLayout.addComponent(getTabSheet());
 		sheetLayout.setStyleName("sheetlayout");
 		return sheetLayout;
@@ -189,7 +191,9 @@ public class SheetView extends CustomComponent implements View {
 			}
 		});
 //		tabSheet.setSizeFull();
-		tabSheet.setHeight("60%");
+		tabSheet.setHeight("30%");
+		tabSheet.setWidth("100%");
+//		tabSheet.setSizeUndefined();
 		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		try {
 //			tabSheet.addTab(openSheet(), "Sheet");------TEST
