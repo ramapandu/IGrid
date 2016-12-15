@@ -1,9 +1,11 @@
 package com.pg.webapp;
+import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 
 public class FormulaBar extends BrowseFormula {
 	MenuItem gridMenu;
@@ -29,6 +31,10 @@ public class FormulaBar extends BrowseFormula {
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				Notification.show("select--"+selectedItem.getId()+"--");
+				
+				getAppUI().getSpreadsheet_dao().getSpreadsheet().createNewSheet("new", 100, 30);
+//				Spreadsheet s=new Spreadsheet();
+//				s.createNewSheet("new", 100, 30);
 			}
         };
         Command openGridCommand = new Command() {
@@ -36,6 +42,7 @@ public class FormulaBar extends BrowseFormula {
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				Notification.show("select--"+selectedItem.getId()+"--");
+				
 			}
         };
         Command saveGridCommand = new Command() {
@@ -50,13 +57,15 @@ public class FormulaBar extends BrowseFormula {
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				Notification.show("select--"+selectedItem.getId()+"--");
+//				getAppUI().getSpreadsheet_dao().getSpreadsheet().
 			}
         };
         Command refreshGridCommand = new Command() {
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				Notification.show("select--"+selectedItem.getId()+"--");
+//				Notification.show("select--"+selectedItem.getId()+"--");
+				getAppUI().getSpreadsheet_dao().getSpreadsheet().refreshAllCellValues();
 			}
         };
         
@@ -116,5 +125,9 @@ public class FormulaBar extends BrowseFormula {
 		
 		return browseFormula;
 	}
+	SpreadsheetDemoUI getAppUI() {
+		return (SpreadsheetDemoUI) UI.getCurrent();
+	}
+	
 	
 }

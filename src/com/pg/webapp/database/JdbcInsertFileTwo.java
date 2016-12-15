@@ -110,9 +110,9 @@ public class JdbcInsertFileTwo {
         String[] allFields = new String[tableFields.size()];
         int i = 0;
         int k=1;
-        while (iter.hasNext()) {
+        while (iter.hasNext() && i<=100) {
             String fieldName = (String) iter.next();
-        	String fieldName1=Integer.toString(k);
+        	String fieldName1="A"+Integer.toString(k);
             Integer fieldType = (Integer) tableFields.get(fieldName);
 
             switch (fieldType) {
@@ -120,7 +120,7 @@ public class JdbcInsertFileTwo {
                 str = fieldName1 + " INTEGER";
                 break;
             case Cell.CELL_TYPE_STRING:
-                str = fieldName1 + " VARCHAR(100)";
+                str = fieldName1 + " BLOB";
                 System.out.print(fieldName1);
                 break;
             case Cell.CELL_TYPE_BOOLEAN:
@@ -140,7 +140,7 @@ public class JdbcInsertFileTwo {
                 String all = org.apache.commons.lang3.StringUtils.join(
                         allFields, ",");
                 String createTableStr = "CREATE TABLE IF NOT EXISTS "
-                        + tableName + " (" + all + ")";
+                        + tableName + " (" + all + ")"+"ENGINE=Innodb DEFAULT CHARSET=utf8";
 
                 System.out.println("Create a new table in the database \n");
                 System.out.println( createTableStr);

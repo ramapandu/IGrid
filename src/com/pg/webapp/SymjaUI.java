@@ -99,7 +99,8 @@ formulaInputArea.addValueChangeListener(new ValueChangeListener() {
 
 	private void initComponents() {
 		symjaLayout=new HorizontalLayout();
-		symjaLayout.setHeight("330px");
+//		symjaLayout.setHeight("330px"); //---TEST1---
+		symjaLayout.setSizeFull();
 		symjaLayout.addComponent(hSplitPanel);
 //		symjaLayout.setSizeFull();
 		symjaSubmitButton.addStyleName("topbarbuttons");

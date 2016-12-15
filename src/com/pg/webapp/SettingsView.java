@@ -38,10 +38,16 @@ public class SettingsView extends Settings2 {
 //		
 //		}
 		for (int i=0;i<(activeSheet.getRow(0).getLastCellNum()-1);i++) {
-			if(activeSheet.getRow(0).getCell(i).getStringCellValue()!=null){
-			
-				headerCombo.addItem(activeSheet.getRow(0).getCell(i).getStringCellValue());
-			
+			if(activeSheet.getRow(0).getCell(i)!=null){ //default 0
+				if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
+                	headerCombo.addItem(activeSheet.getRow(0).getCell(i).getStringCellValue());
+                	}
+				else if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+					headerCombo.addItem(activeSheet.getRow(0).getCell(i).getNumericCellValue());
+                    } 
+				else if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+                     	headerCombo.addItem(activeSheet.getRow(0).getCell(i).getBooleanCellValue());
+                    }
 			}
 		}
 		

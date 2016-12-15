@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -23,7 +24,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.pg.webapp.symja.InEqualityExample;
+import com.pg.webapp.database.JdbcInsertFileTwo;
+import com.pg.webapp.database.JdbcReadFile;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeListener;
@@ -44,26 +46,22 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import com.pg.webapp.database.JdbcInsertFileTwo;
-import com.pg.webapp.database.JdbcReadFile;
-import com.pg.webapp.symja.*;
 
 public class SheetView extends CustomComponent implements View {
 
 	public static final String NAME = "sheet";
 	private static final long serialVersionUID = 6714096000861957459L;
 	Button logoutButton;
-
+	Panel rootPanel;
 	CellRangeAddress range;
 	SpreadsheetFilterTable table;
 	VerticalLayout rootLayout;
@@ -86,29 +84,40 @@ public class SheetView extends CustomComponent implements View {
 	FileInputStream fis;
 
 	@SuppressWarnings({ "unused" })
-	public SheetView() throws ClassNotFoundException, SQLException {
-		setSizeFull();
-
+	public SheetView() throws ClassNotFoundException, SQLException, OpenXML4JException, URISyntaxException {
+//		setSizeFull();
+         rootPanel=new Panel("IGrid");
+         rootPanel.setSizeFull();
+         
 		rootLayout = new VerticalLayout();
-		setCompositionRoot(rootLayout);
+		rootLayout.setSizeFull();
+		rootPanel.setContent(rootLayout);
+		setCompositionRoot(rootPanel);
 		CreateUI();
-       getAppUI().setSheetView(this);
+//       getAppUI().setSheetView(this);
 	}
 
-	private void CreateUI() throws ClassNotFoundException, SQLException {
-
-		rootLayout.addComponent(getTopBar());
+	private void CreateUI() throws ClassNotFoundException, SQLException, OpenXML4JException, URISyntaxException {
+		getTopBar();
+		rootLayout.addComponent(topBar);
+		rootLayout.setExpandRatio(topBar,1f);
 		FormulaBar fb=new FormulaBar();
 		rootLayout.addComponent(fb.getMenuBar());
-		rootLayout.addComponent(getSheetLayout());
+		rootLayout.setExpandRatio(fb.getMenuBar(),2f);
+		getSheetLayout();
+		rootLayout.addComponent(sheetLayout);
+		rootLayout.setExpandRatio(sheetLayout,3f);
+		SymjaUI symja=new SymjaUI();
+		rootLayout.addComponent(symja.getSymjaComponent());
+		rootLayout.setExpandRatio(symja.getSymjaComponent(),4f);
 	}
 
-	public HorizontalLayout getSheetLayout() throws ClassNotFoundException, SQLException {
+	public HorizontalLayout getSheetLayout() throws ClassNotFoundException, SQLException, OpenXML4JException, URISyntaxException {
 		sheetLayout = new HorizontalLayout();
 		sheetLayout.setSizeFull();
 		sheetLayout.setHeight("80%");
 		sheetLayout.addComponent(getTabSheet());
-		sheetLayout.addStyleName("sheetlayout");
+		sheetLayout.setStyleName("sheetlayout");
 		return sheetLayout;
 	}
 
@@ -167,7 +176,7 @@ public class SheetView extends CustomComponent implements View {
 	}
 
 	@SuppressWarnings("unchecked")
-	private TabSheet getTabSheet() throws ClassNotFoundException, SQLException {
+	private TabSheet getTabSheet() throws ClassNotFoundException, SQLException, OpenXML4JException, URISyntaxException {
 		tabSheet = new TabSheet();
 
 		tabSheet.addSelectedTabChangeListener(new SelectedTabChangeListener() {
@@ -179,7 +188,8 @@ public class SheetView extends CustomComponent implements View {
 						.eval("setTimeout(function(){prettyPrint();},300);");
 			}
 		});
-		tabSheet.setSizeFull();
+//		tabSheet.setSizeFull();
+		tabSheet.setHeight("60%");
 		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		try {
 //			tabSheet.addTab(openSheet(), "Sheet");------TEST
@@ -188,10 +198,9 @@ public class SheetView extends CustomComponent implements View {
 			
 //			vl.addComponent(openSheetFromDB());
 			
-			vl.addComponent(openSheetFromDBTwo());
+			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
+//			vl.addComponent(openSheet());
 			
-			SymjaUI symja=new SymjaUI();
-			vl.addComponent(symja.getSymjaComponent());
 //			tabSheet.addTab(openSheetFromDB(), "Sheet");-----TEST for symja
 			tabSheet.addTab(vl, "Sheet");
 			getLogSheet();
@@ -508,10 +517,10 @@ public class SheetView extends CustomComponent implements View {
 		fis.close();
 		
 		spreadsheet.setSizeFull();
-		spreadsheet.setHeight("450px");
+		spreadsheet.setHeight("350px");
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(spreadsheet);
 		getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
-		changeHeaderColor();
+//		changeHeaderColor(); //----TEST-1-----------
         
 		spreadsheet.addSheetChangeListener(new SheetChangeListener() {
 
@@ -521,7 +530,7 @@ public class SheetView extends CustomComponent implements View {
 			public void onSheetChange(SheetChangeEvent event) {
 				spreadsheet.unregisterTable(table);
 				getPopUpButtonsForSheet(spreadsheet.getActiveSheet());
-				changeHeaderColor();
+//				changeHeaderColor();//----TEST-1-----------
 			}
 		});
 		spreadsheet.addCellValueChangeListener(new CellValueChangeListener() {
@@ -592,7 +601,7 @@ public class SheetView extends CustomComponent implements View {
 			public void onSheetChange(SheetChangeEvent event) {
 				getAppUI().getSpreadsheet_dao().getSpreadsheet().unregisterTable(table);
 				getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
-				changeHeaderColor();
+//				changeHeaderColor(); //----TEST-1-----------
 			}
 		});
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addCellValueChangeListener(new CellValueChangeListener() {
@@ -610,7 +619,7 @@ public class SheetView extends CustomComponent implements View {
 	}
 	
 	
-	private Spreadsheet openSheetFromDBTwo() throws ClassNotFoundException, SQLException, IOException{
+	private Spreadsheet openSheetFromDBTwo() throws ClassNotFoundException, SQLException, IOException, OpenXML4JException{
 //		saveSheetToDB();     //----------TEST
 		 XLToDB obj = new XLToDB();  //----TEST1
 //		 obj.insertRecords();
@@ -674,7 +683,7 @@ public class SheetView extends CustomComponent implements View {
 			public void onSheetChange(SheetChangeEvent event) {
 				getAppUI().getSpreadsheet_dao().getSpreadsheet().unregisterTable(table);
 				getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
-				changeHeaderColor();
+//				changeHeaderColor();//----TEST-1-----------
 			}
 		});
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addCellValueChangeListener(new CellValueChangeListener() {
@@ -729,18 +738,20 @@ public class SheetView extends CustomComponent implements View {
 		
 		//TEST
 		CellStyle headerStyle = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook().createCellStyle();
-		
+		if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0)!=null &&getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(1)!=null){
 				for (int i=0;i<(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()-1);i++) {
 //					cell=activeSheet.getRow(0).getCell(i);
+//					if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0)!=null &&getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i)!=null){
 					if(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getStringCellValue()!=null){
 					
 						getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(i).getCellStyle().setFillForegroundColor(IndexedColors.BLACK.getIndex());
 //					activeSheet.getRow(0).getCell(i).getCellStyle().setFillBackgroundColor(IndexedColors.RED.getIndex());
 					
 					}
+//				}
 				}
 //				}
-				
+		}
 		
 		
 	}
