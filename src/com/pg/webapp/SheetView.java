@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.security.sasl.AuthenticationException;
+
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,6 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.pg.webapp.database.JdbcInsertFileTwo;
 import com.pg.webapp.database.JdbcReadFile;
+import com.pg.webapp.database.JdbcWriteFileToDB;
+import com.pg.webapp.security.LDAP_Test_3;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeListener;
@@ -196,16 +200,15 @@ public class SheetView extends CustomComponent implements View {
 //		tabSheet.setSizeUndefined();
 		tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		try {
-//			tabSheet.addTab(openSheet(), "Sheet");------TEST
 			VerticalLayout vl=new VerticalLayout();
 			
+//			vl.addComponent(openSheet());
 			
 //			vl.addComponent(openSheetFromDB());
 			
 			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
-//			vl.addComponent(openSheet());
+
 			
-//			tabSheet.addTab(openSheetFromDB(), "Sheet");-----TEST for symja
 			tabSheet.addTab(vl, "Sheet");
 			getLogSheet();
 			logTable.setPageLength(logTable.size());
@@ -274,11 +277,36 @@ public class SheetView extends CustomComponent implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-                  Notification.show("Export function is not Availble now");
+//                  Notification.show("Export function is not Availble now");
 //                  JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
 //                  jif.importFile();
-			}
-		});
+                  LDAP_Test_3 lt=new LDAP_Test_3();
+//                 if( lt.performAuthentication())
+//                	   Notification.show("SUCCESS!!!..................1");
+//					
+//						try {
+//							if(lt.getListOfAllSamAccountName()){
+//								
+//								try {
+//									 Notification.show("SUCCESS!!!..................2");
+//								} catch (Exception e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
+//							}
+							
+							try {
+								if(lt.LDAP_Test()){
+									 Notification.show("SUCCESS!!!..................3");
+								}
+							} catch (AuthenticationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+						}
+//			}
+			});
 		return exportButton;
 	}
 	
@@ -292,14 +320,26 @@ public class SheetView extends CustomComponent implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
                   Notification.show("Importing File ...");
-                  JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
+                  LDAP_Test_3 lt=new LDAP_Test_3();
                   try {
-					jif.importFile(filePath,fileName);
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+try {
+						if(lt.getListOfAllSamAccountName()){
+							
+							try {
+								 Notification.show("SUCCESS!!!..................2");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
+                  finally{
+                	  
+                  }}
 		});
 		return importButton;
 	}
