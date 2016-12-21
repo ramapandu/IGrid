@@ -204,9 +204,9 @@ public class SheetView extends CustomComponent implements View {
 			
 //			vl.addComponent(openSheet());
 			
-//			vl.addComponent(openSheetFromDB());
+			vl.addComponent(openSheetFromDB());
 			
-			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
+//			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
 
 			
 			tabSheet.addTab(vl, "Sheet");
@@ -636,6 +636,11 @@ try {
 		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
 //		changeHeaderColor();
 //		getAppUI().getCurrent().getPage().reload();
+		
+		//FREEZING FIRST ROW
+		Row r = s.getActiveSheet().getRow(s.getActiveSheet().getFirstRowNum());
+		s.createFreezePane(1,0);
+		System.out.println("First row is frozen");
 		
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
 

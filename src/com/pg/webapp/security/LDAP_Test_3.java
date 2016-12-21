@@ -13,7 +13,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.naming.ldap.LdapContext;
 import javax.security.sasl.AuthenticationException;
 
 public class LDAP_Test_3  {
@@ -137,6 +136,8 @@ public class LDAP_Test_3  {
 	public boolean LDAP_Test() throws AuthenticationException{
 		 String serviceUserPassword = "";
 		String url = "ldaps://10.17.220.185:636";
+	    String base = "ou=ASA,ou=SRO,ou=Identities,DC=global,DC=sap,DC=corp";
+	    String baseDN="cn=ASA1_viprSP01,OU=ASA,OU=SRO,OU=Resources,DC=global,DC=corp,DC=sap";
 		Hashtable env = new Hashtable();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		env.put(Context.PROVIDER_URL, url);
@@ -147,17 +148,30 @@ public class LDAP_Test_3  {
 		 
 		try {
 		    DirContext ctx = new InitialDirContext(env);
+		    System.out.println("NameSpace:"+ctx.getNameInNamespace());
 		    System.out.println("connected");
 		    System.out.println(ctx.getEnvironment());
-		     
-		    // do something useful with the context...
-		 
+//		    NamingEnumeration<SearchResult> results = ctx.search(base, "sAMAccountName={0}",sc);
+		    SearchControls sc = new SearchControls();
+//		    String[] attributeFilter = { identifyingAttribute };
+		    String[] samAccountNameList = null;
+	        sc.setReturningAttributes(samAccountNameList);
+	        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+		    NamingEnumeration<SearchResult> searchResult = ctx.search(base, "(sAMAccountName={0})",sc);
+	      
+		    if (searchResult.hasMore()) {
+		        System.out.println(searchResult.next());
+//		        return;
+		    }
 		    ctx.close();
 		 
 		} catch (AuthenticationNotSupportedException ex) {
 		    System.out.println("The authentication is not supported by the server");
-		} catch (NamingException ex) {
+		} 
+		catch (NamingException ex) {
 		    System.out.println("error when trying to create the context");
+		   
+		    ex.printStackTrace();
 		}
 		
 		return true;

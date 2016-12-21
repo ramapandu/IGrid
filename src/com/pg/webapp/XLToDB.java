@@ -21,7 +21,7 @@ import java.util.*;
 //    	public static final String INSERT_RECORDS="";
     	private static String DELETE_RECORDS = "TRUNCATE test666";
     	private static String GET_COUNT = "SELECT COUNT(*) FROM test666";
-           private static String GET_TABLE = "SELECT * FROM test666";
+           private static String GET_TABLE = "SELECT * FROM huawei_2g_ran LIMIT 50";
 
 
        
