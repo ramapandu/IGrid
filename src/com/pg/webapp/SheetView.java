@@ -595,23 +595,28 @@ try {
 //		 obj.insertRecords();
 		ResultSet rs= obj.getRecords(); 
 		ResultSetMetaData rsmd = rs.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();
-		System.out.println("total columns: "+columnsNumber);
+		int totalColumns = rsmd.getColumnCount();
+		rs.last();
+		int totalRows=0;
+		totalRows=rs.getRow();
+		rs.beforeFirst();
+		
+		System.out.println("total columns: "+totalColumns+"total rows: "+totalRows);
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
-		Spreadsheet s=new Spreadsheet();
+		Spreadsheet s=new Spreadsheet(totalRows,totalColumns);
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 //		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().setSizeFull();
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().setHeight("450px");
 		
-//		s.createNewSheet("TEST2", 100, columnsNumber);
+//		s.createNewSheet("TEST2", 100, totalColumns);
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().setActiveSheetIndex(0);
 //		int i=1;
 		//----------------------------TEST1-----------------------
 		ResultSetMetaData meta = rs.getMetaData();
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(0);
-		for(int j=1;j<=columnsNumber;j++){
+		for(int j=1;j<=totalColumns;j++){
 			System.out.println("Column:"+meta.getColumnLabel(j)+"Num:"+j);
 			getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
 		}
@@ -619,7 +624,7 @@ try {
 		int row=1;
 		while(rs.next()){
 			getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(row);
-			for(int j=1;j<=columnsNumber;j++){
+			for(int j=1;j<=totalColumns;j++){
 //				System.out.println(s.getActiveSheet().getRow(i));
 //				System.out.println(rs.getString(j));
 				if(row==0)
@@ -687,7 +692,7 @@ try {
 //		 obj.insertRecords();
 //		ResultSet rs= obj.getRecords(); ----TEST1
 //		ResultSetMetaData rsmd = rs.getMetaData();------TEST1
-//		int columnsNumber = rsmd.getColumnCount();--------TEST1
+//		int totalColumns = rsmd.getColumnCount();--------TEST1
 		
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
@@ -696,21 +701,21 @@ try {
 		s.setSizeFull();
 		s.setHeight("450px");
 		
-//		s.createNewSheet("TEST2", 100, columnsNumber);
+//		s.createNewSheet("TEST2", 100, totalColumns);
 		s.setActiveSheetIndex(0);
 		
 //		int i=1;
 		//----------------------------TEST1-----------------------
 //		ResultSetMetaData meta = rs.getMetaData();
 //		s.getActiveSheet().createRow(0);
-//		for(int j=1;j<=columnsNumber;j++){
+//		for(int j=1;j<=totalColumns;j++){
 //			s.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
 //		}
 //		
 //		int row=1;
 //		while(rs.next()){
 //			s.getActiveSheet().createRow(row);
-//			for(int j=1;j<=columnsNumber;j++){
+//			for(int j=1;j<=totalColumns;j++){
 ////				System.out.println(s.getActiveSheet().getRow(i));
 ////				System.out.println(rs.getString(j));
 //				if(row==0)
