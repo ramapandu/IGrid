@@ -596,50 +596,52 @@ try {
 		ResultSet rs= obj.getRecords(); 
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
-		
+		System.out.println("total columns: "+columnsNumber);
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
 		Spreadsheet s=new Spreadsheet();
+		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 //		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
-		s.setSizeFull();
-		s.setHeight("450px");
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().setSizeFull();
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().setHeight("450px");
 		
 //		s.createNewSheet("TEST2", 100, columnsNumber);
-		s.setActiveSheetIndex(0);
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().setActiveSheetIndex(0);
 //		int i=1;
 		//----------------------------TEST1-----------------------
 		ResultSetMetaData meta = rs.getMetaData();
-		s.getActiveSheet().createRow(0);
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(0);
 		for(int j=1;j<=columnsNumber;j++){
-			s.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
+			System.out.println("Column:"+meta.getColumnLabel(j)+"Num:"+j);
+			getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
 		}
 		
 		int row=1;
 		while(rs.next()){
-			s.getActiveSheet().createRow(row);
+			getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(row);
 			for(int j=1;j<=columnsNumber;j++){
 //				System.out.println(s.getActiveSheet().getRow(i));
 //				System.out.println(rs.getString(j));
 				if(row==0)
-					s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(meta.getColumnLabel(j));
+					getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(row).createCell(j-1).setCellValue(meta.getColumnLabel(j));
 				else
-		            s.getActiveSheet().getRow(row).createCell(j-1).setCellValue(rs.getString(j));
+					getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(row).createCell(j-1).setCellValue(rs.getString(j));
 		 
 			}
 			row++;
 		}
-		s.refreshAllCellValues();
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().refreshAllCellValues();
 		//-------------------TEST1--------------------
 //		s.setDefaultColumnWidth(110);
-		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
+//		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 //		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().setDefaultColumnWidth(110);
 		getPopUpButtonsForSheet(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet());
 //		changeHeaderColor();
 //		getAppUI().getCurrent().getPage().reload();
 		
 		//FREEZING FIRST ROW
-		Row r = s.getActiveSheet().getRow(s.getActiveSheet().getFirstRowNum());
-		s.createFreezePane(1,0);
+		
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().createFreezePane(1,0);
 		System.out.println("First row is frozen");
 		
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
@@ -661,13 +663,24 @@ try {
                updateLogTable(event);
 			}
 		});
-		
+		printSheetHeaders();
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
-		return s;
+		getAppUI().getSpreadsheet_dao().getSpreadsheet().setRowColHeadingsVisible(false);
+		System.out.println("hidden??:"+getAppUI().getSpreadsheet_dao().getSpreadsheet().isColumnHidden(80));
+		System.out.println("Row+Col hidden??:"+getAppUI().getSpreadsheet_dao().getSpreadsheet().isRowColHeadingsVisible());
+		
+		return getAppUI().getSpreadsheet_dao().getSpreadsheet();
 		
 	}
 	
 	
+	private void printSheetHeaders() {
+		for(int j=1;j<getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum();j++){
+			System.out.println("Column:"+getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getCell(j).getStringCellValue()+"Num:"+j+"\t");
+					 
+		}		
+	}
+
 	private Spreadsheet openSheetFromDBTwo() throws ClassNotFoundException, SQLException, IOException, OpenXML4JException{
 //		saveSheetToDB();     //----------TEST
 		 XLToDB obj = new XLToDB();  //----TEST1
@@ -745,6 +758,7 @@ try {
 		});
 		
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
+s.setRowColHeadingsVisible(false);
 		return s;
 		
 	}
@@ -812,7 +826,7 @@ try {
 			 Row r = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getFirstRowNum());
 			 int lastColumnNum=0;
 			 lastColumnNum= r.getLastCellNum()-1;
-
+			 System.out.println("lastCol Num:"+lastColumnNum);
 			range = new CellRangeAddress(0, sheet.getLastRowNum(), 0, lastColumnNum);
 //			System.out.println("FIRSTROW:"+sheet.getFirstRowNum() + " LASTROW:"
 //					+ sheet.getLastRowNum() + " LASTCOLUMN:" + lastColumnNum+" SHEET:"+sheet.getSheetName());
