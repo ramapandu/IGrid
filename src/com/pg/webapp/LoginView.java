@@ -7,6 +7,7 @@ import java.sql.Statement;
 import com.pg.webapp.database.DbConnection;
 import com.pg.webapp.domain.User;
 import com.pg.webapp.security.LDAPSearch;
+import com.pg.webapp.security.LDAP_Test_3;
 import com.pg.webapp.security.ValidateLogin;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -65,7 +66,6 @@ public class LoginView extends CustomComponent implements View {
 						try {
 							validateLogin();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
@@ -80,7 +80,7 @@ public class LoginView extends CustomComponent implements View {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-
+getAppUI().getPage().reload();
 						
 					}
 
@@ -91,7 +91,7 @@ public class LoginView extends CustomComponent implements View {
 		buttonsContainer.addComponent(loginButton);
 		buttonsContainer.addComponent(cancelButton);
 		Label note = new Label(
-				"Login with Username:test@test.com and Password:test12345 to use the application");
+				"Login with Username and Password to use the application");
 		note.setStyleName("labelwhite");
 		buttonsContainer.addComponent(note);
 		buttonsContainer.setSpacing(true);
@@ -114,6 +114,27 @@ public class LoginView extends CustomComponent implements View {
 			
 //			ValidateLogin vl=new ValidateLogin();
 //			vl.validateLogin("c5245576", "Rp223366!");
+			
+//			LDAP_Test_3 lt=new LDAP_Test_3();
+//            try {
+//try {
+//					if(lt.getListOfAllSamAccountName()){
+//						
+//						try {
+//							 Notification.show("SUCCESS!!!..................2");
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//		}
+//            finally{
+//          	  
+//            }
 			DbConnection conn=new DbConnection();
 			Statement stmt=conn.getConnection().createStatement();  
 			ResultSet rs=stmt.executeQuery("select * from users");  

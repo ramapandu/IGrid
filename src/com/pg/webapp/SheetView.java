@@ -78,6 +78,7 @@ public class SheetView extends CustomComponent implements View {
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
 	String fileName="sheet22.xlsx";
+	boolean edit=false;
 //	TextArea symjaInputArea;
 //	Label symjaText;
 	
@@ -261,7 +262,7 @@ public class SheetView extends CustomComponent implements View {
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp");
+				getUI().getPage().setLocation("/webapp-local");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
@@ -277,9 +278,8 @@ public class SheetView extends CustomComponent implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-//                  Notification.show("Export function is not Availble now");
-//                  JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
-//                  jif.importFile();
+                  Notification.show("Export function is not Availble now");
+
                   LDAP_Test_3 lt=new LDAP_Test_3();
 //                 if( lt.performAuthentication())
 //                	   Notification.show("SUCCESS!!!..................1");
@@ -295,18 +295,18 @@ public class SheetView extends CustomComponent implements View {
 //								}
 //							}
 							
-							try {
-								if(lt.LDAP_Test()){
-									 Notification.show("SUCCESS!!!..................3");
-								}
-							} catch (AuthenticationException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+//							try {
+//								if(lt.LDAP_Test()){
+//									 Notification.show("SUCCESS!!!..................3");
+//								}
+//							} catch (AuthenticationException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//
+//						}
 
-						}
-//			}
-			});
+			}	});
 		return exportButton;
 	}
 	
@@ -320,26 +320,9 @@ public class SheetView extends CustomComponent implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
                   Notification.show("Importing File ...");
-                  LDAP_Test_3 lt=new LDAP_Test_3();
-                  try {
-try {
-						if(lt.getListOfAllSamAccountName()){
-							
-							try {
-								 Notification.show("SUCCESS!!!..................2");
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-                  finally{
-                	  
-                  }}
+//                JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
+//                jif.importFile();
+                  }
 		});
 		return importButton;
 	}
@@ -670,7 +653,7 @@ try {
 		});
 		printSheetHeaders();
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
-		getAppUI().getSpreadsheet_dao().getSpreadsheet().setRowColHeadingsVisible(false);
+//		getAppUI().getSpreadsheet_dao().getSpreadsheet().setRowColHeadingsVisible(false);
 		System.out.println("hidden??:"+getAppUI().getSpreadsheet_dao().getSpreadsheet().isColumnHidden(80));
 		System.out.println("Row+Col hidden??:"+getAppUI().getSpreadsheet_dao().getSpreadsheet().isRowColHeadingsVisible());
 		
@@ -763,7 +746,7 @@ try {
 		});
 		
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
-s.setRowColHeadingsVisible(false);
+//s.setRowColHeadingsVisible(false);
 		return s;
 		
 	}
@@ -818,6 +801,8 @@ s.setRowColHeadingsVisible(false);
 					}
 //				}
 				}
+				
+				
 //				}
 		}
 		

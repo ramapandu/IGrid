@@ -13,6 +13,7 @@ public class DbConnection {
 	try {
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/igrid","root", "123456");
+//		connection = DriverManager.getConnection("jdbc:mysql:// ip-172-31-11-168.us-west-2.compute.internal:3306/igrid","root", "123456");
 
 	} catch (SQLException e3) {
 		System.out.println("Connection Failed! Check output console");

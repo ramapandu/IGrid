@@ -14,8 +14,6 @@ import java.util.*;
 
     public class XLToDB {  
     	SheetView sheetView;
-//        public static final String INSERT_RECORDS = "INSERT INTO test(ID, NAME, VALUE1, VALUE2, VALUE3, VALUE4, VALUE5) VALUES(?,?,?,?,?,?,?)";
-//        private static String GET_COUNT = "SELECT COUNT(*) FROM test";
     	 
     	public static final String INSERT_RECORDS = "INSERT INTO test666 VALUES(?,?,?,?,?,?,?,?,?)";
 //    	public static final String INSERT_RECORDS="";
@@ -32,7 +30,6 @@ import java.util.*;
             PreparedStatement prepStmt = null;
             java.sql.Statement stmt = null;
             int count = 0;
-//            ArrayList<String> mylist = new ArrayList<String>();
 
             try{
             DbConnection DBHelper=new DbConnection();
@@ -43,20 +40,7 @@ import java.util.*;
                 prepStmt.executeQuery();
                 prepStmt = con.prepareStatement(INSERT_RECORDS);
                 stmt = con.createStatement();
-//                ResultSet result = stmt.executeQuery(GET_RECORDS);
-//                while(result.next()) {
-//
-//                    int val = result.getInt(1);
-//                    System.out.println(val);
-//                    count = val+1;
-//
-//                }
 
-
-                //prepStmt.setInt(1,count);
-
-                /* We should now load excel objects and loop through the worksheet data */
-//                FileInputStream fis = new FileInputStream(new File(sheetView.getFilePath()+sheetView.getFileName()));
                 FileInputStream fis = new FileInputStream(new File("C:/Users/rampa/Desktop/testsheets/test.xlsx"));
                 System.out.println("FileInputStream Object created..! ");
                  /* Load workbook */
@@ -131,23 +115,8 @@ import java.util.*;
                   System.out.println("All Records are Updated");
                   prepStmt = con.prepareStatement(INSERT_RECORDS);
                   stmt = con.createStatement();
-//                  ResultSet result = stmt.executeQuery(GET_RECORDS);
-//                  while(result.next()) {
-//
-//                      int val = result.getInt(1);
-//                      System.out.println(val);
-//                      count = val+1;
-//
-//                  }
 
-
-                  //prepStmt.setInt(1,count);
-
-                  /* We should now load excel objects and loop through the worksheet data */
-//                  FileInputStream fis = new FileInputStream(new File(sheetView.getFilePath()+sheetView.getFileName()));
-//                  FileInputStream fis = new FileInputStream(new File("C:/Users/rampa/Desktop/testsheets/test.xlsx"));
-//                  System.out.println("FileInputStream Object created..! ");
-//                   /* Load workbook */
+                  //                   /* Load workbook */
                   Workbook workbook = getAppUI().getSpreadsheet_dao().getSpreadsheet().getWorkbook();
                   System.out.println("XSSFWorkbook Object created..! ");
                   /* Load worksheet */
