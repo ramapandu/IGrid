@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.security.sasl.AuthenticationException;
-
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,9 +24,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.pg.webapp.database.JdbcInsertFileTwo;
 import com.pg.webapp.database.JdbcReadFile;
-import com.pg.webapp.database.JdbcWriteFileToDB;
 import com.pg.webapp.security.LDAP_Test_3;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
@@ -57,7 +53,12 @@ import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.FinishedEvent;
+import com.vaadin.ui.Upload.StartedEvent;
+import com.vaadin.ui.Upload.StartedListener;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class SheetView extends CustomComponent implements View {
@@ -262,7 +263,7 @@ public class SheetView extends CustomComponent implements View {
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp-local");
+				getUI().getPage().setLocation("/webapp-v5");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
@@ -313,6 +314,14 @@ public class SheetView extends CustomComponent implements View {
 	private Button getImportButton() {
 		importButton = new Button("IMPORT");
 		importButton.addStyleName("topbarbuttons");
+//		final Upload sample = new Upload(null, null);
+//	   
+//	    sample.setImmediate(true);
+//	            sample.setButtonCaption(null);
+//	            System.out.println(sample.isVisible());
+	   
+	   
+	  
 		importButton.addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = -7614812368402111788L;
@@ -320,12 +329,28 @@ public class SheetView extends CustomComponent implements View {
 			@Override
 			public void buttonClick(ClickEvent event) {
                   Notification.show("Importing File ...");
+//                  Upload sample = new Upload();
+//                  sample.setImmediate(false);
+//                  sample.setButtonCaption("Upload File");
+//          		final UploadFileWindow_2 window= new UploadFileWindow_2(sample);
+//  	            getAppUI().getCurrent().getUI().addWindow(window.getUploadWindow());
+  	            UploadFile uf=new UploadFile();
+  	            
+  	            Window w=new Window("Upload File");
+  	            w.setHeight("30%");
+  	            w.setWidth("30%");
+  	            w.setModal(true);
+  	            w.setContent(uf);
+  	            uf.setImmediate(true);
+  	            getAppUI().addWindow(w);
+  	           
 //                JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
 //                jif.importFile();
                   }
 		});
 		return importButton;
 	}
+	
 
 	private Button getDownloadButton() {
 		downlaodButton = new Button("DOWNLOAD");
