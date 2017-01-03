@@ -204,9 +204,9 @@ public class SheetView extends CustomComponent implements View {
 			
 //			vl.addComponent(openSheet());
 			
-			vl.addComponent(openSheetFromDB());
+//			vl.addComponent(openSheetFromDB());
 			
-//			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
+			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
 
 			
 			tabSheet.addTab(vl, "Sheet");
@@ -261,7 +261,7 @@ public class SheetView extends CustomComponent implements View {
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp");
+				getUI().getPage().setLocation("/webapp-v6");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
