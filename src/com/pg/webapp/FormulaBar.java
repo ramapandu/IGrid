@@ -1,6 +1,5 @@
 package com.pg.webapp;
-import com.vaadin.addon.spreadsheet.Spreadsheet;
-import com.vaadin.server.ThemeResource;
+import com.pg.webapp.database.DbConnection;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
@@ -69,16 +68,51 @@ public class FormulaBar extends BrowseFormula {
 			}
         };
         
+        Command renameGridCommand = new Command() {
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				Notification.show("select--"+selectedItem.getId()+"--");
+//				getAppUI().getSpreadsheet_dao().getGridName();
+			}
+        };
+        
+        Command insertNewColumnCommand = new Command() {
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				Notification.show("select--"+selectedItem.getId()+"--");
+		
+				
+				
+				try{
+					DbConnection db=new DbConnection();
+			   	    java.sql.Statement st = db.getConnection().createStatement();
+			    int n = st.executeUpdate("ALTER TABLE mytable ADD col int");
+			    System.out.println("Query OK, " + n + " rows affected");
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+        };
+        
         MenuItem new1 = gridMenu.addItem("New Grid", newGridCommand);
 //        new1.addSeparator();
         MenuItem open1 = gridMenu.addItem("Open Grid", openGridCommand);
 //        open1.addSeparator();
+        MenuItem insert1 = gridMenu.addItem("Insert Column", insertNewColumnCommand);
+//      refresh1.addSeparator();
         MenuItem save1 = gridMenu.addItem("Save Grid", saveGridCommand);
 //        save1.addSeparator();
+        MenuItem rename1 = gridMenu.addItem("Rename Grid", renameGridCommand);
+//      refresh1.addSeparator();
         MenuItem close1 = gridMenu.addItem("Close Grid", closeGridCommand);
 //        close1.addSeparator();
         MenuItem refresh1 = gridMenu.addItem("Refresh", refreshGridCommand);
 //        refresh1.addSeparator();
+//        MenuItem delete1=gridMenu.addItem("", )
+      
 	}
 
 

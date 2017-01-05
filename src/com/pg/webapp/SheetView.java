@@ -26,9 +26,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.pg.webapp.database.JdbcInsertFileTwo;
 import com.pg.webapp.database.JdbcReadFile;
-import com.pg.webapp.database.JdbcWriteFileToDB;
 import com.pg.webapp.security.LDAP_Test_3;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
 import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
@@ -71,16 +69,17 @@ public class SheetView extends CustomComponent implements View {
 	VerticalLayout rootLayout;
 	Spreadsheet spreadsheet;
 	HorizontalLayout topBar, sheetLayout;
-	Button editButton, saveButton, downlaodButton, importButton,exportButton,settingsButton,symjaSubmitButton;
+	Button editButton, saveButton, downlaodButton, importButton,exportButton,settingsButton,symjaSubmitButton,showheadersButton;
 	File testSheetFile;
 	Table logTable;
 	Workbook logBook;
 	Sheet logSheet;
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
 	String fileName="sheet22.xlsx";
+	String gridName;
 //	TextArea symjaInputArea;
 //	Label symjaText;
-	
+	boolean visible=true;
 
 	private TabSheet tabSheet;
 
@@ -136,8 +135,9 @@ public class SheetView extends CustomComponent implements View {
 		getImportButton();
 		getExportButton();
 		getSettingsButton();
+		getShowButton();
 		getBrowseBox();
-		final GridLayout grid = new GridLayout(7, 1);
+		final GridLayout grid = new GridLayout(8, 1);
 		// grid.setWidth(400, Unit.PIXELS);
 		grid.setHeight(35, Unit.PIXELS);
 
@@ -161,8 +161,12 @@ public class SheetView extends CustomComponent implements View {
 		
 		grid.addComponent(settingsButton,6,0);
 		grid.setComponentAlignment(settingsButton, Alignment.TOP_RIGHT);
+		
+		grid.addComponent(showheadersButton,7,0);
+		grid.setComponentAlignment(showheadersButton, Alignment.TOP_RIGHT);
 
 		topBar.setPrimaryStyleName("topbar");
+	
 		// topBar.addComponent(getEditButton());
 		// topBar.addComponent(getSaveButton());
 		// topBar.addComponent(getDownloadButton());
@@ -204,13 +208,14 @@ public class SheetView extends CustomComponent implements View {
 			
 //			vl.addComponent(openSheet());
 			
-//			vl.addComponent(openSheetFromDB());
+			vl.addComponent(openSheetFromDB());
 			
-			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
+//			vl.addComponent(openSheetFromDBTwo());//----TEST 1-----
 
 			
 			tabSheet.addTab(vl, "Sheet");
-			getLogSheet();
+//			getLogSheet();   //TEST
+			getLogSheetFromDB();
 			logTable.setPageLength(logTable.size());
 
 			tabSheet.addTab(logTable, "Logs");
@@ -230,7 +235,8 @@ public class SheetView extends CustomComponent implements View {
 		logTable.setWidth("900px");
 		logTable.setHeight("800px");
 		logTable.addContainerProperty("User", String.class, null);
-		logTable.addContainerProperty("Action", String.class, null);
+		logTable.addContainerProperty("Old Value", String.class, null);
+		logTable.addContainerProperty("New value", String.class, null);
 		logTable.addContainerProperty("Date", String.class, null);
 		// Spreadsheet logSheet= new Spreadsheet(fs);
 
@@ -248,6 +254,34 @@ public class SheetView extends CustomComponent implements View {
 		}
 		fs.close();
 //       logBook.close();
+		return logTable;
+	}
+	
+	private Table getLogSheetFromDB() throws IOException, ClassNotFoundException, SQLException {
+	
+		logTable = new Table();
+		logTable.setWidth("900px");
+		logTable.setHeight("800px");
+		logTable.addContainerProperty("User", String.class, null);
+		logTable.addContainerProperty("Old Value", String.class, null);
+		logTable.addContainerProperty("New value", String.class, null);
+		logTable.addContainerProperty("Date", String.class, null);
+		// Spreadsheet logSheet= new Spreadsheet(fs);
+
+		Logger lg=new Logger();
+		ResultSet rs=lg.getLogs();
+		int i = 0;
+		while(rs.next()){
+			
+//			if (row.getRowNum() > 0)
+			
+				logTable.addItem(new Object[] {rs.getString(2).toString(),rs.getString(3).toString(),rs.getString(4).toString(),
+						rs.getString(5).toString() },
+						new Integer(rs.getString(1)));		 
+			
+			i++;
+		}
+		
 		return logTable;
 	}
 
@@ -555,6 +589,28 @@ try {
 		return settingsButton;
 	}
 	
+	private Button getShowButton() {
+		showheadersButton = new Button("Show/Hide Headers");
+		showheadersButton.addStyleName("topbarbuttons");
+		showheadersButton.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = -826402340367265552L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if(visible==true){
+				getAppUI().getSpreadsheet_dao().getSpreadsheet().setRowColHeadingsVisible(false);
+				visible=false;
+				}
+				else if(visible==false){
+					getAppUI().getSpreadsheet_dao().getSpreadsheet().setRowColHeadingsVisible(true);
+					visible=true;
+					}
+			}
+		});
+		return settingsButton;
+	}
+	
 	public Spreadsheet openSheet() throws URISyntaxException, IOException {
 		fis = new FileInputStream(filePath+fileName);
 		spreadsheet = new Spreadsheet(fis);
@@ -615,6 +671,11 @@ try {
 //		int i=1;
 		//----------------------------TEST1-----------------------
 		ResultSetMetaData meta = rs.getMetaData();
+		
+		
+		
+		gridName=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName();
+		System.out.println("Grid Name: "+gridName);
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(0);
 		for(int j=1;j<=totalColumns;j++){
 			System.out.println("Column:"+meta.getColumnLabel(j)+"Num:"+j);
@@ -696,6 +757,7 @@ try {
 		
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
+		 
 //		Spreadsheet s=new Spreadsheet();----TEST1
 		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
 		s.setSizeFull();
@@ -759,7 +821,7 @@ try {
                 @Override
 				public void onCellValueChange(CellValueChangeEvent event) {
                updateLogTable(event);
-			}
+			}	
 		});
 		
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
@@ -796,12 +858,38 @@ s.setRowColHeadingsVisible(false);
 			Date d = new Date();
 			 
          logTable.addItem(new Object[] { getAppUI().getUser().getLoggedInUser(),
-        		"Changed value in Cell-"+element[2]+""+element[1]+" in sheet-"+
-        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to "+c,d.toString() },
+        		"Changed-"+element[2]+""+element[1]+" in sheet-"+
+        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to ",c,d.toString() },
 					new Integer(i+1));
-        }					
+        }
 	}
 	
+	private void updateLogTableDB(CellValueChangeEvent event) {
+	 	Set<CellReference> changedCells = null;
+    	changedCells = event.getChangedCells();
+       
+        Iterator<CellReference> iterator = changedCells.iterator();
+        int i=logTable.size();
+        CellReference cr;
+        Row r;
+        Cell c;
+        String[] element;
+        while(iterator.hasNext()){
+          cr=iterator.next();
+          element =cr.getCellRefParts();
+          r = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(Integer.valueOf(element[1])-1);
+          c=null;
+          if(r!=null)
+        	c=r.getCell(new Integer(cr.getCol()));
+        
+			Date d = new Date();
+			 
+         logTable.addItem(new Object[] { getAppUI().getUser().getLoggedInUser(),
+        		element[2]+""+element[1]+" in sheet-"+
+        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to ",c,d.toString() },
+					new Integer(i+1));
+        }
+	}
 	private void changeHeaderColor() {
 		
 		//TEST

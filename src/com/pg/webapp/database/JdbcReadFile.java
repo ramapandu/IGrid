@@ -35,7 +35,7 @@ public class JdbcReadFile {
         try {
             Connection conn = DriverManager.getConnection(url, user, password);
 //            String sql = "SELECT file FROM  excelfiles where file_id=9 ORDER  BY file_id DESC LIMIT  1;";
-            String sql = "SELECT file FROM  excelfiles where file_id=6 ORDER  BY file_id DESC LIMIT  1;"; //---TEST1-----
+            String sql = "SELECT file FROM  excelfiles where file_id=8 ORDER  BY file_id DESC LIMIT  1;"; //---TEST1-----
             PreparedStatement statement = conn.prepareStatement(sql);
            
  

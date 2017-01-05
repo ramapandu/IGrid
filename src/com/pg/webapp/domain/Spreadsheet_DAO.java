@@ -10,7 +10,14 @@ public class Spreadsheet_DAO implements Serializable {
 
 	private Long id;
 	private Spreadsheet spreadsheet;
+	private String gridName;
 	
+	public String getGridName() {
+		return gridName;
+	}
+	public void setGridName(String gridName) {
+		this.gridName = gridName;
+	}
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
 	}
