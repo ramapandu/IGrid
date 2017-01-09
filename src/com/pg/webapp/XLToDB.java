@@ -1,16 +1,21 @@
 package com.pg.webapp;
-    import java.io.*;
-    import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-    import org.apache.poi.hssf.usermodel.HSSFSheet;
-    import org.apache.poi.ss.usermodel.*;
-    import org.apache.poi.xssf.usermodel.XSSFSheet;
-    import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.pg.webapp.database.DbConnection;
-import com.vaadin.addon.spreadsheet.Spreadsheet;
-import com.vaadin.ui.UI;
+    import java.io.File;
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
 
-import java.util.*;
-    import java.sql.*; 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.pg.webapp.database.DbConnection;
+import com.vaadin.ui.UI; 
 
     public class XLToDB {  
     	SheetView sheetView;
@@ -85,7 +90,6 @@ import java.util.*;
                                                     prepStmt.setString(index, cell.getStringCellValue());                                                                                     
                                                     break;
                                             case Cell.CELL_TYPE_NUMERIC: //handle double data
-                                                int i = (int)cell.getNumericCellValue();
                                                 prepStmt.setInt(index, (int) cell.getNumericCellValue());
                                                     break;
                                             }
@@ -117,28 +121,15 @@ import java.util.*;
                   /* Create Connection objects */
               Connection con = null;
               PreparedStatement prepStmt = null;
-              java.sql.Statement stmt = null;
-              int count = 0;
-//              ArrayList<String> mylist = new ArrayList<String>();
-
               try{
               DbConnection DBHelper=new DbConnection();
                   con = DBHelper.getConnection();
                   System.out.println("Connection :: ["+con+"]");
                   prepStmt = con.prepareStatement(DELETE_RECORDS);
                   prepStmt.execute();
-                  stmt = con.createStatement();
                   System.out.println("All Records are Updated");
                   prepStmt = con.prepareStatement(INSERT_RECORDS);
-                  stmt = con.createStatement();
-//                  ResultSet result = stmt.executeQuery(GET_RECORDS);
-//                  while(result.next()) {
-//
-//                      int val = result.getInt(1);
-//                      System.out.println(val);
-//                      count = val+1;
-//
-//                  }
+                  
 
 
                   //prepStmt.setInt(1,count);
@@ -173,7 +164,6 @@ import java.util.*;
                                                       prepStmt.setString(index, cell.getStringCellValue());                                                                                     
                                                       break;
                                               case Cell.CELL_TYPE_NUMERIC: //handle double data
-                                                  int i = (int)cell.getNumericCellValue();
                                                   prepStmt.setInt(index, (int) cell.getNumericCellValue());
                                                       break;
                                               }

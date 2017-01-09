@@ -1,80 +1,56 @@
 package com.pg.webapp;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.pg.webapp.database.DbConnection;
 import com.vaadin.ui.UI;
 
 public class Logger {  
     	SheetView sheetView;
+    	static String logTableName;
     	 
-    	public static final String INSERT_RECORDS = "INSERT INTO logtable VALUES(?,?,?,?,?)";
-
-//    	public static final String INSERT_NEW_COLUMN = "INSERT INTO test666 VALUES(?,?,?,?,?,?,?,?,?)";
-
            private static String GET_LOGS = "SELECT * FROM logtable";
+           private static String DELETE_LOGS = "SELECT * FROM logtable";
        
-              public void insertRecords(){
-
-                /* Create Connection objects */
-            Connection con = null;
-            PreparedStatement prepStmt = null;
-            java.sql.Statement stmt = null;
-            int count = 0;
-//            ArrayList<String> mylist = new ArrayList<String>();
-
-            try{
-            DbConnection DBHelper=new DbConnection();
-                con = DBHelper.getConnection();
-                System.out.println("Connection :: ["+con+"]");
-               
-               
-                stmt = con.createStatement();
-                prepStmt = con.prepareStatement(INSERT_RECORDS);
-                prepStmt.executeQuery();
-//                ResultSet result = stmt.executeQuery(GET_RECORDS);
-//                while(result.next()) {
-//
-//                    int val = result.getInt(1);
-//                    System.out.println(val);
-//                    count = val+1;
-//
-//                }
-
-
-                //prepStmt.setInt(1,count);
-
-                /* We should now load excel objects and loop through the worksheet data */
-//                FileInputStream fis = new FileInputStream(new File(sheetView.getFilePath()+sheetView.getFileName()));
-               
-                  
-                    //we can execute the statement before reading the next row
-                    prepStmt.executeUpdate();
-                   /* Close input stream */
-                 
-
-            }catch(Exception e){
-                e.printStackTrace();            
-            }
-
-            }
+           public void deleteLogs() throws SQLException, ClassNotFoundException{
+        	   java.sql.Statement stmt = null;
+         	  DbConnection DBHelper=new DbConnection();
+               System.out.println("DB Connection Established");
+               stmt = DBHelper.getConnection().createStatement();
+               stmt.executeQuery(DELETE_LOGS);
+              DBHelper.closeConnection();
+           }
+      
               
+              public void updateLoggerDB(String[] rowData) throws ClassNotFoundException, SQLException {
+              deleteLogs();
+                      try {
+                      	 DbConnection dbConnhelper=new DbConnection();
+                      	Statement stmt = dbConnhelper.getConnection().createStatement();
+                      	String all = org.apache.commons.lang3.StringUtils.join(
+                                  rowData, ",");
+                      	logTableName="logtable";
+                          String createTableStr = "INSERT INTO "
+                                  + logTableName +" "+"values"+ " (" + all + ")";
+
+                          System.out.println("Logger DB update started");
+                          System.out.println( createTableStr);
+                          stmt.executeUpdate(createTableStr);
+                          System.out.println("Logger DB has been updated");
+                      } 	
+                      catch(Exception e){
+                      	e.printStackTrace();
+                      }
+          	}
               
               public ResultSet getLogs() throws ClassNotFoundException, SQLException{
-            	  Connection con = null;
-//                  PreparedStatement prepStmt = null;
                   java.sql.Statement stmt = null;
-//                  int count = 0;
             	  DbConnection DBHelper=new DbConnection();
-                  con = DBHelper.getConnection();
-                  System.out.println("Connection :: ["+con+"]"+" Established");
-//                  prepStmt = con.prepareStatement(GET_TABLE);
-                  stmt = con.createStatement();
+                  System.out.println("DB Connection Established");
+                  stmt = DBHelper.getConnection().createStatement();
                   ResultSet result = stmt.executeQuery(GET_LOGS);
-
                   return result;
               }
               SpreadsheetDemoUI getAppUI() {

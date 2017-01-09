@@ -25,11 +25,11 @@ import com.vaadin.ui.UI;
 @PreserveOnRefresh
 public class SpreadsheetDemoUI extends UI implements Serializable {
 
-	public LogTable getLogTable() {
+	public LogTable getLogTable_dao() {
 		return logTable;
 	}
 
-	public void setLogTable(LogTable logTable) {
+	public void setLogTable_dao(LogTable logTable) {
 		this.logTable = logTable;
 	}
 

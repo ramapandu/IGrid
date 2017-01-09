@@ -4,14 +4,11 @@ package com.pg.webapp.database;
  
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,19 +18,17 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  
 public class JdbcInsertFileTwo {
-	 static String url = "jdbc:mysql://localhost:3306/igrid";
-     static String user = "root";
-     static String password = "123456";
-     static Connection conn;
+//     static Connection conn;
      List sheetData;
      String fullFilePath;
 	static String tableName;
      
      
-     public static Connection getDBConnection() throws SQLException{
-    	 conn = DriverManager.getConnection(url, user, password);
-    	 return conn;
-     }
+//     public static Connection getDBConnection() throws SQLException, ClassNotFoundException{
+//    	 DbConnection dbConnhelper=new DbConnection();
+//    	 conn=dbConnhelper.getConnection();
+//    	 return conn;
+//     }
      
      
     @SuppressWarnings({ "resource", "rawtypes" })
@@ -69,9 +64,35 @@ public class JdbcInsertFileTwo {
       //  printSheetData();
           parseExcelData(sheetData);
     getCreateTable(parseExcelData(sheetData));
+    
     }
     
-    @SuppressWarnings("unchecked")
+    public void updateSheetDB(String[] rowData) {
+    	String[] allFields = new String[rowData.length];       
+
+            try {
+            	 DbConnection dbConnhelper=new DbConnection();
+            	Statement stmt = dbConnhelper.getConnection().createStatement();
+            	String all = org.apache.commons.lang3.StringUtils.join(
+                        rowData, ",");
+            	tableName="huawei_2g_ran";
+                String createTableStr = "INSERT INTO "
+                        + tableName +" "+"values"+ " (" + all + ")";
+
+                System.out.println("Sheet DB update started");
+                System.out.println( createTableStr);
+                stmt.executeUpdate(createTableStr);
+                System.out.println("Sheet DB has been updated");
+            } 	
+            catch(Exception e){
+            	e.printStackTrace();
+            }
+	}
+
+    
+   
+
+	@SuppressWarnings("unchecked")
     private HashMap parseExcelData (List sheetData){
         HashMap<String,Integer> tableFields = new HashMap();
         List list = (List) sheetData.get(0);
@@ -104,6 +125,7 @@ public class JdbcInsertFileTwo {
            }
  
     private static String getCreateTable(HashMap<String, Integer> tableFields) {
+    	DbConnection dbConnhelper;
         Iterator iter = tableFields.keySet().iterator();
 //        Iterator cells = tableFields.keySet().iterator();
         String str = "";
@@ -134,7 +156,8 @@ public class JdbcInsertFileTwo {
        k++;
         }
         try {
-            Statement stmt = getDBConnection().createStatement();
+        	 dbConnhelper=new DbConnection();
+            Statement stmt = dbConnhelper.getConnection().createStatement();
 
             try {
                 String all = org.apache.commons.lang3.StringUtils.join(
@@ -145,6 +168,7 @@ public class JdbcInsertFileTwo {
                 System.out.println("Create a new table in the database \n");
                 System.out.println( createTableStr);
                 stmt.executeUpdate(createTableStr);
+                dbConnhelper.closeConnection();
             } catch (SQLException e) {
                 System.out.println("SQLException: " + e.getMessage());
                 System.out.println("SQLState:     " + e.getSQLState());
@@ -156,6 +180,7 @@ public class JdbcInsertFileTwo {
             System.out.println( e.getMessage() );
             e.printStackTrace();
         }
+       
         return str;
     }
 }

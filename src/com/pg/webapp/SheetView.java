@@ -2,7 +2,6 @@ package com.pg.webapp;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
@@ -26,6 +25,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.pg.webapp.database.JdbcInsertFileTwo;
 import com.pg.webapp.database.JdbcReadFile;
 import com.pg.webapp.security.LDAP_Test_3;
 import com.vaadin.addon.spreadsheet.Spreadsheet;
@@ -216,8 +216,8 @@ public class SheetView extends CustomComponent implements View {
 			tabSheet.addTab(vl, "Sheet");
 //			getLogSheet();   //TEST
 			getLogSheetFromDB();
-			logTable.setPageLength(logTable.size());
-
+//			logTable.setPageLength(logTable.size()); //Test1----
+logTable.setImmediate(true);
 			tabSheet.addTab(logTable, "Logs");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -264,13 +264,13 @@ public class SheetView extends CustomComponent implements View {
 		logTable.setHeight("800px");
 		logTable.addContainerProperty("User", String.class, null);
 		logTable.addContainerProperty("Old Value", String.class, null);
-		logTable.addContainerProperty("New value", String.class, null);
+		logTable.addContainerProperty("New Value", String.class, null);
 		logTable.addContainerProperty("Date", String.class, null);
 		// Spreadsheet logSheet= new Spreadsheet(fs);
 
 		Logger lg=new Logger();
 		ResultSet rs=lg.getLogs();
-		int i = 0;
+		
 		while(rs.next()){
 			
 //			if (row.getRowNum() > 0)
@@ -279,9 +279,9 @@ public class SheetView extends CustomComponent implements View {
 						rs.getString(5).toString() },
 						new Integer(rs.getString(1)));		 
 			
-			i++;
+			
 		}
-		
+		getAppUI().getLogTable_dao().setLogTable(logTable);
 		return logTable;
 	}
 
@@ -334,7 +334,6 @@ public class SheetView extends CustomComponent implements View {
 									 Notification.show("SUCCESS!!!..................3");
 								}
 							} catch (AuthenticationException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 
@@ -525,50 +524,92 @@ try {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				updateGridInDB();
 				try {
-//					File tempFile = new File(filePath,fileName);
-//					FileOutputStream fos = new FileOutputStream(tempFile);
-//					getAppUI().getSpreadsheet_dao().getSpreadsheet().write(fos);
-//					fos.flush();
-//					fos.close();
-					saveSheetToDB();
-										
-					File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
-					FileInputStream fis2 = new FileInputStream(tempFile2);
-					
-//					Spreadsheet s=new Spreadsheet(fis2);
-//					Workbook wb;
-//					int i=s.getLastRow();
-					
-					Collection<?> coll = logTable.getContainerDataSource().getItemIds();
-					Iterator<?> iterate=coll.iterator();
-					
-					int i=logSheet.getLastRowNum();
-					logSheet=logBook.getSheetAt(0);
-					
-	                for(int x = 1; x <= coll.size(); x++){
-	                	
-	                   Item item=logTable.getItem(iterate.next());
-	                    						
-						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("User").getValue().toString());
-						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Action").getValue().toString());
-						logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Date").getValue().toString());
-											               				
-					}
-				
-					FileOutputStream fos2 = new FileOutputStream(tempFile2);
-				    logBook.write(fos2);
-					fos2.flush();
-					fos2.close();
-					
-					Notification.show("Spreadsheet saved !!!");
-										
-				} catch (Exception e) {
+					updateLogsInDB();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 		return saveButton;
+	}
+	
+private void updateGridInDB(){
+	try {
+		
+//		saveSheetToDB(); //Test1
+		 JdbcInsertFileTwo jifl=new JdbcInsertFileTwo();
+	String[] row =new String[getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()] ; 
+	int cellIndex;
+	for(int k=1;k<getAppUI().getSpreadsheet_dao().getSpreadsheet().getLastRow();k++){
+		 Iterator<Cell> cellIterator = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(k).iterator();
+           
+		 cellIndex=0;
+		 while (cellIterator.hasNext()){
+            	row[cellIndex]="'"+cellIterator.next().getStringCellValue()+"'";
+            	cellIndex++;
+            	 System.out.println("row size: "+cellIndex);
+            }
+           
+            jifl.updateSheetDB(row);
+//		row=new String[getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()];
+	}
+		
+							
+//		File tempFile2 = new File("C:/Users/rampa/Desktop/testsheets/logs.xlsx");
+//		FileInputStream fis2 = new FileInputStream(tempFile2);
+		
+
+		
+//		Collection<?> coll = logTable.getContainerDataSource().getItemIds();
+//		Iterator<?> iterate=coll.iterator();
+		
+//		int i=logSheet.getLastRowNum();
+//		logSheet=logBook.getSheetAt(0);
+		
+//        for(int x = 1; x <= coll.size(); x++){
+//        	
+//           Item item=logTable.getItem(iterate.next());
+//            						
+//			logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("User").getValue().toString());
+//			logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Action").getValue().toString());
+//			logSheet.getRow(i).getCell(0).setCellValue(item.getItemProperty("Date").getValue().toString());
+//								               				
+//		}
+	
+	
+//		FileOutputStream fos2 = new FileOutputStream(tempFile2);
+//	    logBook.write(fos2);
+//		fos2.flush();
+//		fos2.close();
+		
+		Notification.show("Spreadsheet saved !!!");
+							
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
+	}
+	
+	private void updateLogsInDB() throws ClassNotFoundException, SQLException{
+		Collection<?> coll = logTable.getContainerDataSource().getItemIds();
+		Iterator<?> iterate=coll.iterator();
+			String[] logRow =new String[5] ; 
+			
+			 Item item;
+			Logger logObj=new Logger();
+			while(iterate.hasNext()){
+				 item=logTable.getItem(iterate.next());
+				logRow[0]="NULL";
+				logRow[1]="'"+item.getItemProperty("User").getValue().toString()+"'";
+				logRow[2]="'"+item.getItemProperty("Old Value").getValue().toString()+"'";
+				logRow[3]="'"+item.getItemProperty("New Value").getValue().toString()+"'";
+				logRow[4]="'"+item.getItemProperty("Date").getValue().toString()+"'";
+				logObj.updateLoggerDB(logRow);
+			}
 	}
 
 	private Button getSettingsButton() {
@@ -638,7 +679,8 @@ try {
 			private static final long serialVersionUID = 1334987428943711253L;
                 @Override
 				public void onCellValueChange(CellValueChangeEvent event) {
-               updateLogTable(event);
+//               updateLogTable(event);  //TEST1
+                	updateLogTableDB(event);
 			}
 		});
 		
@@ -726,8 +768,10 @@ try {
 			private static final long serialVersionUID = 1334987428943711253L;
                 @Override
 				public void onCellValueChange(CellValueChangeEvent event) {
-               updateLogTable(event);
-			}
+//               updateLogTable(event);
+                	System.out.println("Some values in Sheet are changed");
+                	updateLogTableDB(event);
+                }
 		});
 		printSheetHeaders();
 //		s.getActiveSheet().getRow(0).createCell(8).setCellValue("TESTING");
@@ -864,12 +908,14 @@ s.setRowColHeadingsVisible(false);
         }
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateLogTableDB(CellValueChangeEvent event) {
 	 	Set<CellReference> changedCells = null;
     	changedCells = event.getChangedCells();
        
         Iterator<CellReference> iterator = changedCells.iterator();
         int i=logTable.size();
+        System.out.println("no. of elements in log table: "+i);
         CellReference cr;
         Row r;
         Cell c;
@@ -883,13 +929,27 @@ s.setRowColHeadingsVisible(false);
         	c=r.getCell(new Integer(cr.getCol()));
         
 			Date d = new Date();
+			
+			 System.out.println(getAppUI().getUser().getLoggedInUser().toString()+" "+
+		        		element[2]+""+element[1]+" in sheet-"+
+		        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to "+" "+c+" "+d.toString()+"row num:"+i);
+         String elem2=element[2]+""+element[1]+" in sheet-"+
+ 				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to ";
+//			 logTable.addItem(new Object[] { getAppUI().getUser().getLoggedInUser().toString(),element[2]+""+element[1],c.toString(),"09-01-2017" },
+//					new Integer(4));
+         Object newItemId = logTable.addItem();
+         Item row1 = logTable.getItem(newItemId);
+         row1.getItemProperty("User").setValue(getAppUI().getUser().getLoggedInUser());
+         row1.getItemProperty("Old Value").setValue(element[2]+""+element[1]);
+         row1.getItemProperty("New Value").setValue(c.toString());
+         row1.getItemProperty("Date").setValue(d.toString());
 			 
-         logTable.addItem(new Object[] { getAppUI().getUser().getLoggedInUser(),
-        		element[2]+""+element[1]+" in sheet-"+
-        				getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName()+" to ",c,d.toString() },
-					new Integer(i+1));
+//			 logTable.markAsDirtyRecursive();
+			 System.out.println("table size:"+logTable.size());
         }
 	}
+	
+	
 	private void changeHeaderColor() {
 		
 		//TEST
