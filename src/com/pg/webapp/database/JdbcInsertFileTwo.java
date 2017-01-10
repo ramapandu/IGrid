@@ -16,6 +16,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.pg.webapp.SpreadsheetDemoUI;
+import com.vaadin.ui.UI;
  
 public class JdbcInsertFileTwo {
 //     static Connection conn;
@@ -72,6 +75,11 @@ public class JdbcInsertFileTwo {
 
             try {
             	 DbConnection dbConnhelper=new DbConnection();
+            	 tableName="huawei_2g_ran";
+            	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
+            	 String createTableStr1 = "EXEC sp_rename "+ tableName+", " +getAppUI().getSpreadsheet_dao().getGridName();
+            	 stmt1.executeUpdate(createTableStr1);
+            	 
             	Statement stmt = dbConnhelper.getConnection().createStatement();
             	String all = org.apache.commons.lang3.StringUtils.join(
                         rowData, ",");
@@ -183,4 +191,8 @@ public class JdbcInsertFileTwo {
        
         return str;
     }
+    
+    SpreadsheetDemoUI getAppUI() {
+		return (SpreadsheetDemoUI) UI.getCurrent();
+	}
 }

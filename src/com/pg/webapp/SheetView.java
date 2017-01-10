@@ -551,7 +551,7 @@ private void updateGridInDB(){
 		 while (cellIterator.hasNext()){
             	row[cellIndex]="'"+cellIterator.next().getStringCellValue()+"'";
             	cellIndex++;
-            	 System.out.println("row size: "+cellIndex);
+//            	 System.out.println("row size: "+cellIndex);
             }
            
             jifl.updateSheetDB(row);
@@ -693,6 +693,8 @@ private void updateGridInDB(){
 //		 obj.insertRecords();
 		ResultSet rs= obj.getRecords(); 
 		ResultSetMetaData rsmd = rs.getMetaData();
+		 System.out.println("Table name"+rsmd.getTableName(1));
+		gridName=rsmd.getTableName(1);
 		int totalColumns = rsmd.getColumnCount();
 		rs.last();
 		int totalRows=0;
@@ -703,6 +705,7 @@ private void updateGridInDB(){
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
 		Spreadsheet s=new Spreadsheet(totalRows,totalColumns);
+		s.setSheetName(0, gridName); //SET GRID NAME
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 //		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().setSizeFull();
@@ -716,8 +719,8 @@ private void updateGridInDB(){
 		
 		
 		
-		gridName=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName();
-		System.out.println("Grid Name: "+gridName);
+//		gridName=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName();
+//		System.out.println("Grid Name: "+gridName);
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().createRow(0);
 		for(int j=1;j<=totalColumns;j++){
 			System.out.println("Column:"+meta.getColumnLabel(j)+"Num:"+j);
