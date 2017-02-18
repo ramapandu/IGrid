@@ -95,7 +95,9 @@ $v-gradient: false;
     color: red;
     background-color:blue;
 }
-    
+    .v-checkbox { }
+  .v-checkbox > input { }
+  .v-checkbox > label { }
     
     .mainlayout{
     height: 650px;

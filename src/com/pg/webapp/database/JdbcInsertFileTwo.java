@@ -2,6 +2,7 @@ package com.pg.webapp.database;
 
 
  
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,12 +36,14 @@ public class JdbcInsertFileTwo {
      
      
     @SuppressWarnings({ "resource", "rawtypes" })
-	public void importFile(String filePath,String fileName) throws IOException {
-    	fullFilePath=filePath+fileName;
+	public void importFile(File file,String fileName) throws IOException {
+//    	fullFilePath=filePath+fileName;
+    	tableName=file.getName();
+//    	tableName=fileName;
     	 sheetData = new ArrayList();
           FileInputStream fis = null;
           try {
-              fis = new FileInputStream(fullFilePath);
+              fis = new FileInputStream(file);
               XSSFWorkbook workbook = new XSSFWorkbook(fis);
               tableName=workbook.getSheetName(0);
               XSSFSheet sheet = workbook.getSheetAt(0);
@@ -70,24 +73,53 @@ public class JdbcInsertFileTwo {
     
     }
     
-    public void updateSheetDB(String[] rowData) {
+    public void deleteAllRecords(String sheetName){
+tableName=sheetName;
+        try {
+        	 DbConnection dbConnhelper=new DbConnection();
+//        	 tableName="huawei_2g_ran";
+        	 //TEST
+//        	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
+//        	 String createTableStr1 = "EXEC sp_rename "+ tableName+", " +getAppUI().getSpreadsheet_dao().getGridName();
+//        	 stmt1.executeUpdate(createTableStr1);
+        	 
+        	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
+        	 String createTableStr2 = "SET SQL_SAFE_UPDATES = 0";
+        	 stmt1.executeUpdate(createTableStr2);
+        	 String createTableStr1 = "DELETE FROM "+ tableName;
+        	 stmt1.executeUpdate(createTableStr1);
+        }
+        catch(Exception e){
+        	e.printStackTrace();
+        }
+    }
+    
+    public void updateSheetDB(String[] rowData,String sheetName) {
     	String[] allFields = new String[rowData.length];       
 
             try {
             	 DbConnection dbConnhelper=new DbConnection();
-            	 tableName="huawei_2g_ran";
-            	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
-            	 String createTableStr1 = "EXEC sp_rename "+ tableName+", " +getAppUI().getSpreadsheet_dao().getGridName();
-            	 stmt1.executeUpdate(createTableStr1);
+//            	 tableName="huawei_2g_ran";
+            	 tableName=sheetName;
+            	 //TEST
+//            	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
+//            	 String createTableStr1 = "EXEC sp_rename "+ tableName+", " +getAppUI().getSpreadsheet_dao().getGridName();
+//            	 stmt1.executeUpdate(createTableStr1);
+            	 
+//            	 Statement stmt1 = dbConnhelper.getConnection().createStatement();
+//            	 String createTableStr2 = "SET SQL_SAFE_UPDATES = 0";
+//            	 stmt1.executeUpdate(createTableStr2);
+//            	 String createTableStr1 = "DELETE FROM "+ tableName;
+//            	 stmt1.executeUpdate(createTableStr1);
             	 
             	Statement stmt = dbConnhelper.getConnection().createStatement();
             	String all = org.apache.commons.lang3.StringUtils.join(
                         rowData, ",");
-            	tableName="huawei_2g_ran";
+//            	tableName="huawei_2g_ran";
                 String createTableStr = "INSERT INTO "
                         + tableName +" "+"values"+ " (" + all + ")";
 
-                System.out.println("Sheet DB update started");
+//                System.out.println("Sheet DB update started");
                 System.out.println( createTableStr);
                 stmt.executeUpdate(createTableStr);
                 System.out.println("Sheet DB has been updated");
@@ -108,6 +140,7 @@ public class JdbcInsertFileTwo {
             Cell cell=(Cell) list.get(j);
             tableFields.put(cell.getStringCellValue(),cell.getCellType());
     }
+        System.out.print("Parsing done!!!");
         return tableFields; 
     }
     
@@ -190,6 +223,17 @@ public class JdbcInsertFileTwo {
         }
        
         return str;
+    }
+    
+    public void addColumnToGridTable(String tableName,String columnName) throws ClassNotFoundException, SQLException{
+    	DbConnection dbConnhelper;
+    	dbConnhelper=new DbConnection();
+        Statement stmt = dbConnhelper.getConnection().createStatement();
+        String createTableStr = "ALTER TABLE "+ tableName+" ADD COLUMN "+ columnName+ " INT ;";
+        System.out.println(createTableStr);
+        stmt.executeUpdate(createTableStr);
+        dbConnhelper.closeConnection();
+        
     }
     
     SpreadsheetDemoUI getAppUI() {

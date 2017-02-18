@@ -53,8 +53,10 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
+import com.vaadin.ui.Upload.FinishedEvent;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -69,7 +71,7 @@ public class SheetView extends CustomComponent implements View {
 	VerticalLayout rootLayout;
 	Spreadsheet spreadsheet;
 	HorizontalLayout topBar, sheetLayout;
-	Button editButton, saveButton, downlaodButton, importButton,exportButton,settingsButton,symjaSubmitButton,showheadersButton;
+	Button editButton, saveButton, downlaodButton, importButton,exportButton,settingsButton,symjaSubmitButton,showheadersButton,counterButton;
 	File testSheetFile;
 	Table logTable;
 	Workbook logBook;
@@ -77,6 +79,9 @@ public class SheetView extends CustomComponent implements View {
 	String filePath="C:/Users/rampa/Desktop/testsheets/";
 	String fileName="sheet22.xlsx";
 	String gridName;
+	CounterManagementView cm;
+	  JdbcInsertFileTwo jif;
+	UploadXLFile uf;
 //	TextArea symjaInputArea;
 //	Label symjaText;
 	boolean visible=true;
@@ -135,9 +140,10 @@ public class SheetView extends CustomComponent implements View {
 		getImportButton();
 		getExportButton();
 		getSettingsButton();
+		getCounterButton();
 		getShowButton();
 		getBrowseBox();
-		final GridLayout grid = new GridLayout(8, 1);
+		final GridLayout grid = new GridLayout(9, 1);
 		// grid.setWidth(400, Unit.PIXELS);
 		grid.setHeight(35, Unit.PIXELS);
 
@@ -165,6 +171,10 @@ public class SheetView extends CustomComponent implements View {
 		grid.addComponent(showheadersButton,7,0);
 		grid.setComponentAlignment(showheadersButton, Alignment.TOP_RIGHT);
 
+		grid.addComponent(counterButton,8,0);
+		grid.setComponentAlignment(counterButton, Alignment.TOP_RIGHT);
+
+		
 		topBar.setPrimaryStyleName("topbar");
 	
 		// topBar.addComponent(getEditButton());
@@ -295,7 +305,7 @@ logTable.setImmediate(true);
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp-v6");
+				getUI().getPage().setLocation("/webapp");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
@@ -350,29 +360,54 @@ logTable.setImmediate(true);
 
 			private static final long serialVersionUID = -7614812368402111788L;
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void buttonClick(ClickEvent event) {
-                  Notification.show("Importing File ...");
-                  LDAP_Test_3 lt=new LDAP_Test_3();
-                  try {
-try {
-						if(lt.getListOfAllSamAccountName()){
-							
-							try {
-								 Notification.show("SUCCESS!!!..................2");
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//                  Notification.show("Importing File ...");
+//                JdbcInsertFileTwo jif=new JdbcInsertFileTwo();
+//                jif.importFile();
+                
+                uf=new UploadXLFile();
+                uf.uploadFile();
+                uf.getUploadStream().addListener(new Upload.FinishedListener() {
+        	        private static final long serialVersionUID = 1L;
+
+        	        @Override
+        	        public void uploadFinished(FinishedEvent event) {
+        	        	File file=uf.getFile();
+        	             jif=new JdbcInsertFileTwo();
+        	             try {
+        	            	 System.out.println("File Name"+uf.getFileName());
+        					jif.importFile(file,uf.getFileName());
+        				} catch (IOException e) {
+        					e.printStackTrace();
+        				}
+        	        }
+        	    });
+//                Upload upload=uf.getUploadStream();
+               
+//                  LDAP_Test_3 lt=new LDAP_Test_3();
+//                  try {
+//try {
+//						if(lt.getListOfAllSamAccountName()){
+//							
+//							try {
+//								 Notification.show("SUCCESS!!!..................2");
+//							} catch (Exception e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//						}
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//			}
+//                  finally{
+//                	  
+//                  }}
+			
 			}
-                  finally{
-                	  
-                  }}
 		});
 		return importButton;
 	}
@@ -538,23 +573,48 @@ try {
 	}
 	
 private void updateGridInDB(){
+	JdbcInsertFileTwo jifl=new JdbcInsertFileTwo();
+	jifl.deleteAllRecords(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName());
 	try {
 		
 //		saveSheetToDB(); //Test1
-		 JdbcInsertFileTwo jifl=new JdbcInsertFileTwo();
-	String[] row =new String[getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()] ; 
+		 
+	String[] row =new String[getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()+1] ; 
+	 System.out.println(row.length);
 	int cellIndex;
+	jifl.addColumnToGridTable(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName(),"Result1");
 	for(int k=1;k<getAppUI().getSpreadsheet_dao().getSpreadsheet().getLastRow();k++){
 		 Iterator<Cell> cellIterator = getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(k).iterator();
            
 		 cellIndex=0;
+		 Cell cell;
+//		 insertNewColumnInTable();
+//		 KpiListWindowView kl=new KpiListWindowView();
+//		 jifl.addColumnToGridTable(getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName(), cm.getKpiWindowInstance().getAppliedFormula());
+		 
 		 while (cellIterator.hasNext()){
-            	row[cellIndex]="'"+cellIterator.next().getStringCellValue()+"'";
+//            	row[cellIndex]="'"+cellIterator.next().getStringCellValue()+"'";
+            	 cell=cellIterator.next();
+            	switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_NUMERIC:
+                	row[cellIndex]="'"+cell.getNumericCellValue()+"'";
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                	row[cellIndex]="'"+cell.getStringCellValue()+"'";
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                	row[cellIndex]="'"+cell.getBooleanCellValue()+"'";
+                    break;
+                default:
+                	row[cellIndex]= "";
+                    break;
+                }
+            	
             	cellIndex++;
 //            	 System.out.println("row size: "+cellIndex);
             }
            
-            jifl.updateSheetDB(row);
+            jifl.updateSheetDB(row,getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName());
 //		row=new String[getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getRow(0).getLastCellNum()];
 	}
 		
@@ -594,6 +654,10 @@ private void updateGridInDB(){
 
 	}
 	
+	private void insertNewColumnInTable() {
+	
+}
+
 	private void updateLogsInDB() throws ClassNotFoundException, SQLException{
 		Collection<?> coll = logTable.getContainerDataSource().getItemIds();
 		Iterator<?> iterate=coll.iterator();
@@ -635,7 +699,7 @@ private void updateGridInDB(){
 		showheadersButton.addStyleName("topbarbuttons");
 		showheadersButton.addClickListener(new ClickListener() {
 
-			private static final long serialVersionUID = -826402340367265552L;
+			private static final long serialVersionUID = 4407233311308428766L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -649,7 +713,23 @@ private void updateGridInDB(){
 					}
 			}
 		});
-		return settingsButton;
+		return showheadersButton;
+	}
+	
+	private Button getCounterButton() {
+		counterButton = new Button("Counter Mgmt");
+		counterButton.addStyleName("topbarbuttons");
+		counterButton.addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = -8124443498179718980L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				cm=new CounterManagementView();
+				getAppUI().getUI().addWindow(cm.getCounterMgmtWindow());
+			}
+		});
+		return counterButton;
 	}
 	
 	public Spreadsheet openSheet() throws URISyntaxException, IOException {
@@ -704,7 +784,7 @@ private void updateGridInDB(){
 		System.out.println("total columns: "+totalColumns+"total rows: "+totalRows);
 		 JdbcReadFile jrf=new JdbcReadFile();
 		 
-		Spreadsheet s=new Spreadsheet(totalRows,totalColumns);
+		Spreadsheet s=new Spreadsheet(totalRows,totalColumns+1);
 		s.setSheetName(0, gridName); //SET GRID NAME
 		getAppUI().getSpreadsheet_dao().setSpreadsheet(s);
 //		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
@@ -754,6 +834,11 @@ private void updateGridInDB(){
 		
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().createFreezePane(1,0);
 		System.out.println("First row is frozen");
+		
+		//FREEZING LAST COLUMN
+//		getAppUI().getSpreadsheet_dao().getSpreadsheet().createFreezePane(1,totalColumns);
+		
+		
 		
 		getAppUI().getSpreadsheet_dao().getSpreadsheet().addSheetChangeListener(new SheetChangeListener() {
 
