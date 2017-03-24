@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src&quot;,&quot;THEME&quot;:&quot;valo&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-horizontal-layout width="659px" height-full> 
+   <vaadin-vertical-layout width="89.91%" height-full _id="newKpiContainer2" :expand> 
+    <vaadin-horizontal-layout spacing width-full height="20.52%" _id="technology_hl"> 
+     <vaadin-label style-name="bold h2" size-auto plain-text _id="technology_label">
+       Technology 
+     </vaadin-label> 
+     <vaadin-label style-name="bold h2" immediate size-auto plain-text _id="technology_label_value">
+       NULL 
+     </vaadin-label> 
+    </vaadin-horizontal-layout> 
+    <vaadin-vertical-layout spacing width="302px" margin-left _id="code_vl"> 
+     <vaadin-label style-name="bold" size-auto plain-text _id="aggregations_label">
+       Aggregations 
+     </vaadin-label> 
+     <vaadin-check-box caption="CELLCODE" required _id="cellCode_CB" :center></vaadin-check-box> 
+     <vaadin-check-box caption="SITECODE" required _id="siteCode_CB" :center></vaadin-check-box> 
+     <vaadin-check-box caption="BSCCODE" required _id="bscCode_CB" :center></vaadin-check-box> 
+    </vaadin-vertical-layout> 
+    <vaadin-horizontal-layout width-full margin-left margin-top _id="kpi_name_hl"> 
+     <vaadin-text-field columns="2" caption="KPI Name" text-change-event-mode="eager" input-prompt="Enter a name for new KPI" style-name="inline-icon" width-full _id="kpi_Name"></vaadin-text-field> 
+     <vaadin-check-box caption="Enable Dynamic Thresholding" _id="dynamic_thresholding" :bottom></vaadin-check-box> 
+    </vaadin-horizontal-layout> 
+    <vaadin-horizontal-layout spacing margin-left _id="formulabar_hl"> 
+     <vaadin-text-area caption="Formula" width-full _id="formula_Area"></vaadin-text-area> 
+     <vaadin-combo-box caption="Counters" input-prompt="Select Counter" _id="counters_ComboBox"></vaadin-combo-box> 
+     <vaadin-native-button plain-text _id="addButton" :right>
+       Add 
+     </vaadin-native-button> 
+    </vaadin-horizontal-layout> 
+    <vaadin-horizontal-layout spacing height="40px" _id="buttons_hl" :bottom :center> 
+     <vaadin-native-button plain-text _id="saveButton">
+       Save 
+     </vaadin-native-button> 
+     <vaadin-native-button plain-text _id="validateButton">
+       Validate 
+     </vaadin-native-button> 
+    </vaadin-horizontal-layout> 
+   </vaadin-vertical-layout> 
+  </vaadin-horizontal-layout>  
+ </body>
+</html>

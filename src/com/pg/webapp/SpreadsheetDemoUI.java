@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.pg.webapp.counter_management.New_KPI_Window_View;
 import com.pg.webapp.domain.LogTable;
 import com.pg.webapp.domain.Spreadsheet_DAO;
 import com.pg.webapp.domain.User;
@@ -36,6 +37,7 @@ public class SpreadsheetDemoUI extends UI implements Serializable {
 	private User user;
 	private LogTable logTable;
 	private SheetView sheetView;
+	private New_KPI_Window_View nkv;
 	private Spreadsheet_DAO spreadsheet_dao;
 	public Spreadsheet_DAO getSpreadsheet_dao() {
 		return spreadsheet_dao;
@@ -91,4 +93,13 @@ public class SpreadsheetDemoUI extends UI implements Serializable {
 	Navigator getNavigatorManager() {
 		return navigator;
 	}
+	
+	public New_KPI_Window_View getNewKpiMainWindow(){
+		  System.out.println("nkv val: "+nkv.getId());
+			return nkv;
+		}
+		
+		public void setNewKpiMainWindow(New_KPI_Window_View new_kpi_window){
+			nkv=new_kpi_window;
+		}
 }

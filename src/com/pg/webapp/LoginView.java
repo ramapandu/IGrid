@@ -108,21 +108,21 @@ public class LoginView extends CustomComponent implements View {
 		password = passwordField.getValue();
 		String dbUser,dbPassword;
 
-		try {
+//		try {
 //			LDAPSearch ldapSearch=new LDAPSearch();
 //			ldapSearch.Authenticate();
 			
 //			ValidateLogin vl=new ValidateLogin();
 //			vl.validateLogin("c5245576", "Rp223366!");
-			DbConnection conn=new DbConnection();
-			Statement stmt=conn.getConnection().createStatement();  
-			ResultSet rs=stmt.executeQuery("select * from users");  
-			while(rs.next())  {
-			System.out.println(rs.getString(2)+"  "+rs.getString(3));  
-			dbUser=rs.getString(2);
-			dbPassword=rs.getString(3);
-			if (username.equals(dbUser)
-					&& password.equals(dbPassword)) {
+//			DbConnection conn=new DbConnection();
+//			Statement stmt=conn.getConnection().createStatement();  
+//			ResultSet rs=stmt.executeQuery("select * from users");  
+//			while(rs.next())  {
+//			System.out.println(rs.getString(2)+"  "+rs.getString(3));  
+//			dbUser=rs.getString(2);
+//			dbPassword=rs.getString(3);
+			if (username.equals("test@test.com")
+					&& password.equals("test12345")) {
 				Notification.show("Welcome " + username);
 				getAppUI().getUser().setLoggedInUser(username);
 				getAppUI().getNavigator().navigateTo("sheet");
@@ -132,14 +132,11 @@ public class LoginView extends CustomComponent implements View {
 			if(getAppUI().getUser().getLoggedInUser()==null)
 				Notification.show("User name OR Password is wrong");
 			}
-			conn.getConnection().close(); 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+//			conn.getConnection().close(); 
+//		}
+	
 								
-	}
+//	}
 	
 	@Override
 	public void enter(ViewChangeEvent event) {

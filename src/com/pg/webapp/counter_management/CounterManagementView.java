@@ -1,7 +1,8 @@
-package com.pg.webapp;
+package com.pg.webapp.counter_management;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.pg.webapp.SpreadsheetDemoUI;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
@@ -15,6 +16,7 @@ public class CounterManagementView extends CounterManagement {
 	
 	private Window counterManagementWindow;
 	KpiListWindowView klv;
+	New_KPI_Window_View nkv;
 
 	public CounterManagementView() {
 		
@@ -43,7 +45,8 @@ public Window getCounterMgmtWindow(){
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-			
+			nkv=new New_KPI_Window_View();
+			getAppUI().getUI().addWindow(nkv.getNewKpiWindow());
 		}
 	});
 	return counterManagementWindow;

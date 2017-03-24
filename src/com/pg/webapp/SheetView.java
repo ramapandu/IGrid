@@ -25,6 +25,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.pg.webapp.counter_management.CounterManagementView;
+import com.pg.webapp.counter_management.New_KPI_Window_View;
 import com.pg.webapp.database.JdbcInsertFileTwo;
 import com.pg.webapp.database.JdbcReadFile;
 import com.pg.webapp.security.LDAP_Test_3;
@@ -80,6 +82,7 @@ public class SheetView extends CustomComponent implements View {
 	String fileName="sheet22.xlsx";
 	String gridName;
 	CounterManagementView cm;
+	New_KPI_Window_View nkv;
 	  JdbcInsertFileTwo jif;
 	UploadXLFile uf;
 //	TextArea symjaInputArea;
@@ -225,9 +228,9 @@ public class SheetView extends CustomComponent implements View {
 			
 			tabSheet.addTab(vl, "Sheet");
 //			getLogSheet();   //TEST
-			getLogSheetFromDB();
+			//getLogSheetFromDB();----------PG LAB TEST---------------------------------IMP
 //			logTable.setPageLength(logTable.size()); //Test1----
-logTable.setImmediate(true);
+//logTable.setImmediate(true);
 			tabSheet.addTab(logTable, "Logs");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -305,7 +308,7 @@ logTable.setImmediate(true);
 				getSession().close();
 				((SpreadsheetDemoUI) UI.getCurrent()).getUser()
 						.setLoggedInUser(null);
-				getUI().getPage().setLocation("/webapp");
+				getUI().getPage().setLocation("/IGrid");
 			}
 		});
 		logoutButton.addStyleName("topbarbuttons");
@@ -725,8 +728,12 @@ private void updateGridInDB(){
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				cm=new CounterManagementView();
-				getAppUI().getUI().addWindow(cm.getCounterMgmtWindow());
+//				cm=new CounterManagementView();
+//				getAppUI().getUI().addWindow(cm.getCounterMgmtWindow());
+				
+				nkv=new New_KPI_Window_View();
+				getAppUI().setNewKpiMainWindow(nkv);
+				getAppUI().getUI().addWindow(nkv.getNewKpiWindow());
 			}
 		});
 		return counterButton;
@@ -1165,5 +1172,7 @@ s.setRowColHeadingsVisible(false);
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
+	
+	
 
 }

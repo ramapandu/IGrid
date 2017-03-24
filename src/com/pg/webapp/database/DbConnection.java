@@ -17,7 +17,7 @@ public class DbConnection {
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/igrid","root", "123456");
+			connection = DriverManager.getConnection("jdbc:mysql://192.168.10.171:3306/COUNTERMAN","tomcat", "password");
 
 		} catch (SQLException e3) {
 			System.out.println("Connection Failed! Check output console");
