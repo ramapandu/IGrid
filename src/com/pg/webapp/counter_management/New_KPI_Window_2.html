@@ -27,12 +27,12 @@
      <vaadin-text-field columns="2" caption="KPI Name" text-change-event-mode="eager" input-prompt="Enter a name for new KPI" style-name="inline-icon" width-full _id="kpi_Name"></vaadin-text-field> 
      <vaadin-check-box caption="Enable Dynamic Thresholding" _id="dynamic_thresholding" :bottom></vaadin-check-box> 
     </vaadin-horizontal-layout> 
-    <vaadin-horizontal-layout spacing margin-left _id="formulabar_hl"> 
-     <vaadin-text-area caption="Formula" width-full _id="formula_Area"></vaadin-text-area> 
-     <vaadin-combo-box caption="Counters" input-prompt="Select Counter" _id="counters_ComboBox"></vaadin-combo-box> 
+    <vaadin-horizontal-layout spacing width="600px" margin-left _id="formulabar_hl"> 
+     <vaadin-text-area caption="Formula" width="200%" _id="formula_Area"></vaadin-text-area> 
      <vaadin-native-button plain-text _id="addButton" :right>
        Add 
      </vaadin-native-button> 
+     <vaadin-combo-box caption="Counters" input-prompt="Select Counter" _id="counters_ComboBox"></vaadin-combo-box> 
     </vaadin-horizontal-layout> 
     <vaadin-horizontal-layout spacing height="40px" _id="buttons_hl" :bottom :center> 
      <vaadin-native-button plain-text _id="saveButton">

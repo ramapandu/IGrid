@@ -38,8 +38,8 @@ public class New_KPI_Window_2 extends HorizontalLayout {
 	protected CheckBox dynamic_thresholding;
 	protected HorizontalLayout formulabar_hl;
 	protected TextArea formula_Area;
-	protected ComboBox counters_ComboBox;
 	protected NativeButton addButton;
+	protected ComboBox counters_ComboBox;
 	protected HorizontalLayout buttons_hl;
 	protected NativeButton saveButton;
 	protected NativeButton validateButton;

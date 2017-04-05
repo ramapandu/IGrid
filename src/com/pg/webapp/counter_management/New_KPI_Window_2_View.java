@@ -73,6 +73,9 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 					if (kpi_Name.getValue() != "") {
 						if (formula_Area.getValue() != "") {
 							nkwv.createButtons();
+							nkwv.addButtonsToGrid();
+							nkwv.insertKpiIntoArray(technology_label_value.getValue(),kpi_Name.getValue(),"111",formula_Area.getValue());
+							System.out.println("CREATE BUTTONS "+technology_label_value.getValue()+kpi_Name.getValue()+"111"+formula_Area.getValue());
 							newKpiWindow2.close();
 						}
 					} else

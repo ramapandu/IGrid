@@ -26,9 +26,9 @@ import com.vaadin.ui.UI;
 //    	public static final String INSERT_RECORDS="";
     	private static String DELETE_RECORDS = "TRUNCATE test666";
     	private static String GET_COUNT = "SELECT COUNT(*) FROM test666";
-//           private static String GET_TABLE = "SELECT * FROM Global_Active_HW2GRAN_Counters";
+//           private static String GET_TABLE = "SELECT * FROM global_active_huawei_2g_ran_counters";
 
-    	private static String GET_TABLE = "SELECT * FROM global_active_huawei_2g_ran_counters";
+    	private static String GET_TABLE = "SELECT * FROM huawei_2g_ran LIMIT 10";
        
               public void insertRecords(){
 
