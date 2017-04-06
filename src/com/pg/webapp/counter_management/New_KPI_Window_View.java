@@ -66,7 +66,7 @@ generateSheetPreview();
 		previewSheet.setSheetName(0, gridName); //SET GRID NAME
 //		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
 		previewSheet.setSizeFull();
-		previewSheet.setHeight("450px");
+		previewSheet.setHeight("300px");
 		
 		previewSheet.setActiveSheetIndex(0);
 //		int i=1;
@@ -185,7 +185,7 @@ generateSheetPreview();
 		String kpi_Name = "";
 		
 		update_Button = new Button("Update");
-		submit_Button = new Button("Sumit");
+		submit_Button = new Button("Submit");
 		delete_Button = new Button("Delete");
 
 		update_Button.addClickListener(new ClickListener() {

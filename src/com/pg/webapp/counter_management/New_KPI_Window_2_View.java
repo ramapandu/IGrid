@@ -2,13 +2,13 @@ package com.pg.webapp.counter_management;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.vaadin.csvalidation.CSValidator;
 
 import com.pg.webapp.SpreadsheetDemoUI;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
@@ -31,7 +31,35 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 
 	private void buildFormLayout() {
 
-	}
+		final TextArea textarea = new TextArea("Text Area with Counter");
+		textarea.setColumns(30);
+		textarea.setRows(5);
+		        
+		CSValidator validator1 = new CSValidator();
+		validator1.extend(textarea);
+		validator1.setJavaScript("\"valid \" + value.length + \" characters\"");
+		validator1.setValidateInitialEmpty(true);
+		
+		newKpiContainer2.addComponent(textarea);
+		CSValidator validator = new CSValidator();
+		         validator.extend(formula_Area);
+		 //        validator.setJavaScript("var maxvalue = 1000;\n" +
+		 //                              "var charsleft = maxvalue - value.length;\n" +
+		 //                              "var result = null;\n" +
+		 //                              "if (charsleft > 0)\n" +
+		 //                              "    result = \"valid \" + value.length + \" of \" + maxvalue;\n" +
+		 //                              "else\n" +
+		 //                              "    result = \"\" + value.length + \" of \" + maxvalue;\n" +
+		 //                              "result;");
+		 //        validator.setValidateInitialEmpty(true);
+		         validator.setJavaScript("\"valid \" + value.length + \" characters\"");
+	         validator.setValidateEmpty(true);
+	 
+		   
+		       }
+		   
+
+	
 
 	public Window getNewKpiWindow2() {
 		newKpiWindow2.center();
@@ -40,17 +68,30 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 //		nkwv=new New_KPI_Window
 		nkwv=getAppUI().getNewKpiMainWindow();
 		
+		String[] parts;
 		for (int i = 3; i < (activeSheet.getRow(0).getLastCellNum() - 1); i++) {
 			if (activeSheet.getRow(0).getCell(i) != null) { // default 0
+				
 				if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_STRING) {
-					counters_ComboBox.addItem(activeSheet.getRow(0).getCell(i).getStringCellValue());
-				} else if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+					if(activeSheet.getRow(0).getCell(i).getStringCellValue().contains("C_")){
+						parts = activeSheet.getRow(0).getCell(i).getStringCellValue().split("_");
+					counters_ComboBox.addItem(parts[1]);
+					}
+					else if(activeSheet.getRow(0).getCell(i).getStringCellValue().contains("L_")){
+						//DO NOTHING->Dont add kpi with L_
+					}
+					else
+						counters_ComboBox.addItem(activeSheet.getRow(0).getCell(i).getStringCellValue());
+					}
+					
+				else if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_NUMERIC) {
 					counters_ComboBox.addItem(activeSheet.getRow(0).getCell(i).getNumericCellValue());
 				} else if (activeSheet.getRow(0).getCell(i).getCellType() == Cell.CELL_TYPE_BOOLEAN) {
 					counters_ComboBox.addItem(activeSheet.getRow(0).getCell(i).getBooleanCellValue());
 				}
 			}
-		}
+			}
+		
 
 		addButton.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = -6870412160671836168L;
