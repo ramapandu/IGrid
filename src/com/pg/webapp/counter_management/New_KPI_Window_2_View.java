@@ -2,12 +2,11 @@ package com.pg.webapp.counter_management;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.vaadin.csvalidation.CSValidator;
 
 import com.pg.webapp.SpreadsheetDemoUI;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
@@ -23,12 +22,28 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 		newKpiWindow2.setHeight(700, Unit.PIXELS);
 		newKpiWindow2.setWidth(1000, Unit.PIXELS);
 		newKpiWindow2.addStyleName("settings");
+		buildFormLayout();
 		newKpiWindow2.setContent(newKpiContainer2);
 		newKpiWindow2.setModal(true);
-		buildFormLayout();
+		
+	
 	}
 
 	private void buildFormLayout() {
+		CSValidator validator = new CSValidator();
+		validator.extend(formula_Area);
+//		validator.setJavaScript("var maxvalue = 1000;\n" +
+//		                      "var charsleft = maxvalue - value.length;\n" +
+//		                      "var result = null;\n" +
+//		                      "if (charsleft > 0)\n" +
+//		                      "    result = \"valid \" + value.length + \" of \" + maxvalue;\n" +
+//		                      "else\n" +
+//		                      "    result = \"\" + value.length + \" of \" + maxvalue;\n" +
+//		                      "result;");
+//		validator.setValidateInitialEmpty(true);
+        validator.setJavaScript("\"valid \" + value.length + \" characters\"");
+        validator.setValidateEmpty(true);
+
 
 	}
 
@@ -73,9 +88,10 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 					if (kpi_Name.getValue() != "") {
 						if (formula_Area.getValue() != "") {
 							nkwv.createButtons();
-							nkwv.addButtonsToGrid();
+							
 							nkwv.insertKpiIntoArray(technology_label_value.getValue(),kpi_Name.getValue(),"111",formula_Area.getValue());
 							System.out.println("CREATE BUTTONS "+technology_label_value.getValue()+kpi_Name.getValue()+"111"+formula_Area.getValue());
+							nkwv.addButtonsToGrid();
 							newKpiWindow2.close();
 						}
 					} else

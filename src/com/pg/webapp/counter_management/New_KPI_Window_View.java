@@ -1,13 +1,25 @@
 package com.pg.webapp.counter_management;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 import com.pg.webapp.SpreadsheetDemoUI;
+import com.pg.webapp.XLToDB;
+import com.pg.webapp.database.JdbcReadFile;
+import com.vaadin.addon.spreadsheet.Spreadsheet;
+import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeEvent;
+import com.vaadin.addon.spreadsheet.Spreadsheet.CellValueChangeListener;
+import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeEvent;
+import com.vaadin.addon.spreadsheet.Spreadsheet.SheetChangeListener;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.GridLayout.Area;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
 public class New_KPI_Window_View extends New_KPI_Window {
@@ -20,8 +32,9 @@ public class New_KPI_Window_View extends New_KPI_Window {
 	Button update_Button, submit_Button, delete_Button;
 	String[][] myStringArray = new String[15][5];
 	int row_Index=0;
+	String gridName;
 
-	public New_KPI_Window_View() {
+	public New_KPI_Window_View() throws ClassNotFoundException, SQLException {
 		newKpiWindow = new Window("Counter Management-NEW KPI");
 		newKpiWindow.setHeight(700, Unit.PIXELS);
 		newKpiWindow.setWidth(1000, Unit.PIXELS);
@@ -30,6 +43,68 @@ public class New_KPI_Window_View extends New_KPI_Window {
 		newKpiWindow.setModal(true);
 		buildTabSheet();
 		buildGridButtons();
+		generateSheetPreview();
+		
+	}
+
+	private void generateSheetPreview() throws ClassNotFoundException, SQLException {
+//		Spreadsheet previewSheet=new Spreadsheet();
+//		previewSheet=getAppUI().getSpreadsheet_dao().getSpreadsheet();
+		
+		
+		 XLToDB obj = new XLToDB();  //----TEST1
+//		 obj.insertRecords();
+		ResultSet rs= obj.getRecords(); 
+		ResultSetMetaData rsmd = rs.getMetaData();
+		 System.out.println("Table name"+rsmd.getTableName(1));
+		gridName=rsmd.getTableName(1);
+		int totalColumns = rsmd.getColumnCount();
+		rs.last();
+		int totalRows=0;
+		totalRows=rs.getRow();
+		rs.beforeFirst();
+		
+		System.out.println("total columns: "+totalColumns+"total rows: "+totalRows);
+		 JdbcReadFile jrf=new JdbcReadFile();
+		 
+		Spreadsheet previewSheet=new Spreadsheet(totalRows,totalColumns+1);
+		previewSheet.setSheetName(0, gridName); //SET GRID NAME
+//		 Spreadsheet s=new Spreadsheet(jrf.LoadFileFromDB(filePath, fileName));
+		previewSheet.setSizeFull();
+		previewSheet.setHeight("450px");
+		
+		previewSheet.setActiveSheetIndex(0);
+//		int i=1;
+		//----------------------------TEST1-----------------------
+		ResultSetMetaData meta = rs.getMetaData();
+		
+		
+		
+//		gridName=getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName();
+//		System.out.println("Grid Name: "+gridName);
+		previewSheet.getActiveSheet().createRow(0);
+		for(int j=1;j<=totalColumns;j++){
+			System.out.println("Column:"+meta.getColumnLabel(j)+"Num:"+j);
+			previewSheet.getActiveSheet().getRow(0).createCell(j-1).setCellValue(meta.getColumnLabel(j));		 
+		}
+		
+		int row=1;
+		while(rs.next()){
+			previewSheet.getActiveSheet().createRow(row);
+			for(int j=1;j<=totalColumns;j++){
+//				System.out.println(s.getActiveSheet().getRow(i));
+//				System.out.println(rs.getString(j));
+				if(row==0)
+					previewSheet.getActiveSheet().getRow(row).createCell(j-1).setCellValue(meta.getColumnLabel(j));
+				else
+					previewSheet.getActiveSheet().getRow(row).createCell(j-1).setCellValue(rs.getString(j));
+		 
+			}
+			row++;
+		}
+		
+		
+		preview_hl.addComponent(previewSheet);
 	}
 
 	private void buildGridButtons() {
@@ -124,7 +199,12 @@ public class New_KPI_Window_View extends New_KPI_Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ukwv = new Update_KPI_Window_View();
-				String[] row=myStringArray[row_Index];
+//			new_kpi_gridLayout1.getComponentIterator().equals(update_Button.getConnectorId());
+			
+				Area a = new_kpi_gridLayout1.getComponentArea(event.getButton());
+				int button_Index=a.getRow1();
+				System.out.println("Button Click index: "+button_Index);
+				String[] row=myStringArray[button_Index];
 				System.out.println("UPDATE-1 "+row[0]+" "+row[1]+" "+row[2]+" "+row[3]+" "+row[4]);
 				getAppUI().getUI().addWindow(ukwv.getUpdateWindow(row));
 
@@ -157,8 +237,7 @@ public class New_KPI_Window_View extends New_KPI_Window {
 public void addButtonsToGrid(){
 	Label kpi_label;
 	String kpi_Name = "";
-	if(row_Index<=15)
-		row_Index++;
+	
 	int gridSize = 0;
 	gridSize = new_kpi_gridLayout1.getRows();
 	System.out.println("Grid size: " + gridSize);
@@ -166,6 +245,7 @@ public void addButtonsToGrid(){
 		if (new_kpi_gridLayout1.getComponent(0, row_Index) instanceof Label) {
 		} else {
 			kpi_Name=myStringArray[row_Index][3];
+			System.out.println("kpi name: "+kpi_Name+" row index: "+row_Index);
 			kpi_label = new Label("KPI" + "" + String.valueOf(row_Index) + "<" + kpi_Name + ">");
 			new_kpi_gridLayout1.addComponent(kpi_label, 0, row_Index);
 			new_kpi_gridLayout1.addComponent(update_Button, 1, row_Index);
@@ -180,12 +260,14 @@ public void addButtonsToGrid(){
 
 	public void insertKpiIntoArray(String technology, String displayName, String aggregation,
 			String formula) {
+		if(row_Index<=15)
+			row_Index++;
 		myStringArray[row_Index][0] = technology;
-		myStringArray[row_Index][1] = "KPI"+(row_Index-1);
+		myStringArray[row_Index][1] = "KPI"+(row_Index);
 		myStringArray[row_Index][2] = aggregation;
 		myStringArray[row_Index][3] = displayName;
 		myStringArray[row_Index][4] = formula;
-		System.out.println("INSERT "+myStringArray[0][1]+row_Index);
+		System.out.println("INSERT "+myStringArray[row_Index][3]+" "+row_Index);
 
 	}
 
