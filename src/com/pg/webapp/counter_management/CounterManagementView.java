@@ -1,5 +1,7 @@
 package com.pg.webapp.counter_management;
 
+import java.sql.SQLException;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.pg.webapp.SpreadsheetDemoUI;
@@ -45,7 +47,15 @@ public Window getCounterMgmtWindow(){
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-			nkv=new New_KPI_Window_View();
+			try {
+				nkv=new New_KPI_Window_View();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			getAppUI().getUI().addWindow(nkv.getNewKpiWindow());
 		}
 	});

@@ -731,7 +731,15 @@ private void updateGridInDB(){
 //				cm=new CounterManagementView();
 //				getAppUI().getUI().addWindow(cm.getCounterMgmtWindow());
 				
-				nkv=new New_KPI_Window_View();
+				try {
+					nkv=new New_KPI_Window_View();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				getAppUI().setNewKpiMainWindow(nkv);
 				getAppUI().getUI().addWindow(nkv.getNewKpiWindow());
 			}

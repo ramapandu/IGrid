@@ -23,9 +23,10 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 		newKpiWindow2.setHeight(700, Unit.PIXELS);
 		newKpiWindow2.setWidth(1000, Unit.PIXELS);
 		newKpiWindow2.addStyleName("settings");
+		buildFormLayout();
 		newKpiWindow2.setContent(newKpiContainer2);
 		newKpiWindow2.setModal(true);
-		buildFormLayout();
+		
 	}
 
 	private void buildFormLayout() {
@@ -73,9 +74,10 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 					if (kpi_Name.getValue() != "") {
 						if (formula_Area.getValue() != "") {
 							nkwv.createButtons();
-							nkwv.addButtonsToGrid();
+							
 							nkwv.insertKpiIntoArray(technology_label_value.getValue(),kpi_Name.getValue(),"111",formula_Area.getValue());
 							System.out.println("CREATE BUTTONS "+technology_label_value.getValue()+kpi_Name.getValue()+"111"+formula_Area.getValue());
+							nkwv.addButtonsToGrid();
 							newKpiWindow2.close();
 						}
 					} else

@@ -25,6 +25,7 @@ public class New_KPI_Window extends VerticalLayout {
 	protected VerticalLayout new_kpi_vl1;
 	protected GridLayout new_kpi_gridLayout1;
 	protected NativeButton create_kpi_btn1;
+	protected VerticalLayout preview_vl;
 	protected VerticalLayout new_kpi_vl2;
 	protected GridLayout new_kpi_gridLayout2;
 	protected NativeButton create_kpi_btn2;
