@@ -267,5 +267,30 @@ public void addButtonsToGrid(){
 		       System.out.println("INSERT "+myStringArray[row_Index][3]+" "+row_Index);
 
 	}
+	
+	public void updateKpiData(String technology, String displayName, String aggregation,
+			String formula) {
+
+		myStringArray[row_Index][0] = technology;
+		myStringArray[row_Index][1] = "KPI"+(row_Index);
+		myStringArray[row_Index][2] = aggregation;
+		myStringArray[row_Index][3] = displayName;
+		myStringArray[row_Index][4] = formula;
+		       System.out.println("UPDATE-3 "+myStringArray[row_Index][3]+" "+row_Index);
+
+	}
+	
+	public void deleteKpiData(){
+		myStringArray[row_Index][0] ="";
+		myStringArray[row_Index][1] ="";
+		myStringArray[row_Index][2] ="";
+		myStringArray[row_Index][3] ="";
+		myStringArray[row_Index][4] ="";
+		
+		new_kpi_gridLayout1.removeComponent(row_Index, 0);
+		new_kpi_gridLayout1.removeComponent(row_Index, 1);
+		new_kpi_gridLayout1.removeComponent(row_Index, 2);
+		new_kpi_gridLayout1.removeComponent(row_Index, 3);
+	}
 
 }

@@ -42,8 +42,8 @@ public class Delete_KPI_Window extends VerticalLayout {
 	protected ComboBox delete_counters_ComboBox;
 	protected NativeButton delete_addButton;
 	protected HorizontalLayout delete_buttons_hl;
-	protected NativeButton delete_saveButton;
-	protected NativeButton delete_validateButton;
+	protected NativeButton delete_deleteButton;
+	protected NativeButton delete_cancelButton;
 
 	public Delete_KPI_Window() {
 		Design.read(this);

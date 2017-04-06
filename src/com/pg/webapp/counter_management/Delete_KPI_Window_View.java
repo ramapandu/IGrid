@@ -2,6 +2,8 @@ package com.pg.webapp.counter_management;
 
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 
 public class Delete_KPI_Window_View extends Delete_KPI_Window {
 Window delete_Kpi_Winow;
@@ -22,8 +24,34 @@ public Window getDeleteWindow(String row[]){
 	delete_siteCode_CB.setValue(true);
 	delete_bscCode_CB.setValue(true);
 	delete_kpi_Name.setValue(row[3]);
-	delete_kpi_Name.setReadOnly(true);
 	delete_formula_Area.setValue(row[4]);
+	//SET data read-only
+	delete_cellCode_CB.setReadOnly(true);
+	delete_siteCode_CB.setReadOnly(true);
+	delete_bscCode_CB.setReadOnly(true);
+	delete_kpi_Name.setReadOnly(true);
+	delete_formula_Area.setReadOnly(true);
+	createDeleteButtons();
 	return delete_Kpi_Winow;
+}
+
+private void createDeleteButtons() {
+	delete_deleteButton.addClickListener(new ClickListener() {
+		private static final long serialVersionUID = -6870412160671836168L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+
+		}
+	});	
+	
+	delete_cancelButton.addClickListener(new ClickListener() {
+		private static final long serialVersionUID = -6870412160671836168L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+
+		}
+	});	
 }
 }
