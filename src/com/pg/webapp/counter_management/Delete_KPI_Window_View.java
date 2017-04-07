@@ -1,12 +1,15 @@
 package com.pg.webapp.counter_management;
 
+import com.pg.webapp.SpreadsheetDemoUI;
 import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
 public class Delete_KPI_Window_View extends Delete_KPI_Window {
 Window delete_Kpi_Winow;
+New_KPI_Window_View nkwv;;
 	public Delete_KPI_Window_View(){
 		delete_Kpi_Winow = new Window("Counter Management-NEW KPI");
 		delete_Kpi_Winow.setHeight(700, Unit.PIXELS);
@@ -41,7 +44,8 @@ private void createDeleteButtons() {
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-
+			getAppUI().getNewKpiMainWindow().deleteKpiData();
+			delete_Kpi_Winow.close();
 		}
 	});	
 	
@@ -50,8 +54,11 @@ private void createDeleteButtons() {
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-
+			delete_Kpi_Winow.close();
 		}
 	});	
+}
+SpreadsheetDemoUI getAppUI() {
+	return (SpreadsheetDemoUI) UI.getCurrent();
 }
 }

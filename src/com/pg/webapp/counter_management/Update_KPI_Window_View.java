@@ -59,8 +59,10 @@ private void createUpdateButtons() {
 		public void buttonClick(ClickEvent event) {
 			update_formula_Area.setImmediate(true);
 			System.out.println("KPI added to formulabar");
+			if(update_counters_ComboBox.getValue()!=null)
 			update_formula_Area.setValue(update_formula_Area.getValue() + update_counters_ComboBox.getValue());
-
+			else
+				update_formula_Area.setValue(update_formula_Area.getValue());	
 		}
 	});	
 	

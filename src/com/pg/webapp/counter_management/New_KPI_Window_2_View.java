@@ -31,16 +31,16 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 
 	private void buildFormLayout() {
 
-		final TextArea textarea = new TextArea("Text Area with Counter");
-		textarea.setColumns(30);
-		textarea.setRows(5);
-		        
-		CSValidator validator1 = new CSValidator();
-		validator1.extend(textarea);
-		validator1.setJavaScript("\"valid \" + value.length + \" characters\"");
-		validator1.setValidateInitialEmpty(true);
-		
-		newKpiContainer2.addComponent(textarea);
+//		final TextArea textarea = new TextArea("Text Area with Counter");
+//		textarea.setColumns(30);
+//		textarea.setRows(5);
+//		        
+//		CSValidator validator1 = new CSValidator();
+//		validator1.extend(textarea);
+//		validator1.setJavaScript("\"valid \" + value.length + \" characters\"");
+//		validator1.setValidateInitialEmpty(true);
+//		
+//		newKpiContainer2.addComponent(textarea);
 		CSValidator validator = new CSValidator();
 		         validator.extend(formula_Area);
 		 //        validator.setJavaScript("var maxvalue = 1000;\n" +
@@ -54,7 +54,7 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 		 //        validator.setValidateInitialEmpty(true);
 		         validator.setJavaScript("\"valid \" + value.length + \" characters\"");
 	         validator.setValidateEmpty(true);
-	 
+	
 		   
 		       }
 		   
@@ -91,6 +91,7 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 				}
 			}
 			}
+		counters_ComboBox.setScrollToSelectedItem(true);
 		
 
 		addButton.addClickListener(new ClickListener() {
