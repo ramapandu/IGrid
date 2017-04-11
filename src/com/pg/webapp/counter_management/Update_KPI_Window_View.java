@@ -45,7 +45,11 @@ private void createUpdateButtons() {
 		public void buttonClick(ClickEvent event) {
 			update_formula_Area.setImmediate(true);
 			System.out.println("KPI updated");
+			if(update_counters_ComboBox.getValue()!=null)
 			update_formula_Area.setValue(update_formula_Area.getValue() + update_counters_ComboBox.getValue());
+			else
+				update_formula_Area.setValue(update_formula_Area.getValue());	
+			
 			nkwv=getAppUI().getNewKpiMainWindow();
 			nkwv.updateKpiData(update_technology_label_value.getValue(),update_kpi_Name.getValue(),String.valueOf(update_kpi_Name.getValue())+String.valueOf(update_cellCode_CB.getValue())+String.valueOf(update_siteCode_CB.getValue())+String.valueOf(update_siteCode_CB.getValue()),update_formula_Area.getValue());
 		update_Kpi_Winow.close();

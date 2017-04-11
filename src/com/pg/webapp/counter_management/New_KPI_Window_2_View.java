@@ -1,14 +1,20 @@
 package com.pg.webapp.counter_management;
 
+import java.sql.SQLException;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.vaadin.csvalidation.CSValidator;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.pg.webapp.SpreadsheetDemoUI;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
@@ -92,6 +98,26 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 			}
 			}
 		counters_ComboBox.setScrollToSelectedItem(true);
+//		formula_Area.addValueChangeListener(   addKeyDownHandler(new KeyDownHandler() {
+//            public void onKeyDown(KeyDownEvent event) {
+//
+//                int kc = event.getNativeKeyCode();
+//                if (kc == KeyCodes.KEY_BACKSPACE || kc == KeyCodes.KEY_DELETE) {
+//                    event.preventDefault();
+//                }
+//            }
+//        });
+		
+		formula_Area.addValueChangeListener(new ValueChangeListener() {
+		
+			private static final long serialVersionUID = -2055377661530153476L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				charCount_label.setValue("update");
+			}
+				     
+		    });
 		
 
 		addButton.addClickListener(new ClickListener() {
@@ -117,7 +143,15 @@ public class New_KPI_Window_2_View extends New_KPI_Window_2 {
 						if (formula_Area.getValue() != "") {
 							nkwv.createButtons();
 							
-							nkwv.insertKpiIntoArray(technology_label_value.getValue(),kpi_Name.getValue(),"111",formula_Area.getValue());
+							try {
+								nkwv.insertKpiIntoArray(technology_label_value.getValue(),kpi_Name.getValue(),"111",formula_Area.getValue());
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							System.out.println("CREATE BUTTONS "+technology_label_value.getValue()+kpi_Name.getValue()+"111"+formula_Area.getValue());
 							nkwv.addButtonsToGrid();
 							newKpiWindow2.close();

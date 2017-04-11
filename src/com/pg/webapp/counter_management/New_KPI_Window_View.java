@@ -1,6 +1,7 @@
 package com.pg.webapp.counter_management;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import com.pg.webapp.SpreadsheetDemoUI;
@@ -28,6 +29,7 @@ public class New_KPI_Window_View extends New_KPI_Window {
 	String[][] myStringArray = new String[15][5];
 	int row_Index=0;
 	String gridName;
+	ConterManagement_DB cmdb;
 
 	public New_KPI_Window_View() throws ClassNotFoundException, SQLException {
 		newKpiWindow = new Window("Counter Management-NEW KPI");
@@ -39,6 +41,52 @@ public class New_KPI_Window_View extends New_KPI_Window {
 		buildTabSheet();
 		buildGridButtons();
 generateSheetPreview();
+
+getKpiDataFromDB();
+		
+	}
+
+	private void getKpiDataFromDB() throws ClassNotFoundException, SQLException {
+cmdb=new ConterManagement_DB(); 
+		ResultSet rs=cmdb.get_CM_Records();		
+		ResultSetMetaData rsmd = rs.getMetaData();
+		gridName=rsmd.getTableName(1);
+		rs.last();
+		rs.beforeFirst();
+		
+		ResultSetMetaData meta = rs.getMetaData();
+		
+		int row=1;
+		while(rs.next()&&row<=15){
+		 
+			myStringArray[row][0]=rs.getString(1);
+			myStringArray[row][1]=rs.getString(2);
+			myStringArray[row][2]=rs.getString(3);
+			myStringArray[row][3]=rs.getString(4);
+			myStringArray[row][4]=rs.getString(5);			
+			row++;
+		}
+		
+//		createButtons();
+		for (int row_Index = 0; row_Index < 15;row_Index++) {
+			if (new_kpi_gridLayout1.getComponent(0, row_Index) instanceof Label) {
+			} else {
+				if(myStringArray[row_Index][0]!=null &&myStringArray[row_Index][0]!=""){
+				createButtons();
+				String kpi_Name = myStringArray[row_Index][3];
+				Label kpi_label = new Label("KPI" + "" + String.valueOf(row_Index+1) + "<" + kpi_Name + ">");
+				new_kpi_gridLayout1.addComponent(kpi_label, 0, row_Index);
+				new_kpi_gridLayout1.addComponent(update_Button, 1, row_Index);
+				new_kpi_gridLayout1.addComponent(submit_Button, 2, row_Index);
+				new_kpi_gridLayout1.addComponent(delete_Button, 3, row_Index);
+//				insertKpiIntoArray(index,getAppUI().getSpreadsheet_dao().getSpreadsheet().getActiveSheet().getSheetName(), "KPI" + String.valueOf(index), tagName, aggregation, formula);
+//			row_Index=index;
+//				break;
+			}
+			}
+		}
+	
+		
 		
 	}
 
@@ -104,6 +152,7 @@ generateSheetPreview();
 
 	private void buildGridButtons() {
 		// new_kpi_gridLayout1.addComponent(component, column, row);
+//		createButtons();
 	}
 
 	private void buildTabSheet() {
@@ -211,7 +260,8 @@ generateSheetPreview();
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-
+				Area a = new_kpi_gridLayout1.getComponentArea(event.getButton());
+				row_Index=a.getRow1();
 			}
 		});
 
@@ -220,6 +270,8 @@ generateSheetPreview();
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				Area a = new_kpi_gridLayout1.getComponentArea(event.getButton());
+				row_Index=a.getRow1();
 				dkwv = new Delete_KPI_Window_View();
 				String[] row=myStringArray[row_Index];
 				getAppUI().getUI().addWindow(dkwv.getDeleteWindow(row));
@@ -255,7 +307,7 @@ public void addButtonsToGrid(){
 }
 
 	public void insertKpiIntoArray(String technology, String displayName, String aggregation,
-			String formula) {
+			String formula) throws ClassNotFoundException, SQLException {
          if(row_Index<=15)
              row_Index++;
 
@@ -266,6 +318,7 @@ public void addButtonsToGrid(){
 		myStringArray[row_Index][4] = formula;
 		       System.out.println("INSERT "+myStringArray[row_Index][3]+" "+row_Index);
 		       printAllKpiData();
+		       cmdb.insert_CM_Record(gridName, myStringArray[row_Index]);
 
 	}
 	

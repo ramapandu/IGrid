@@ -28,7 +28,7 @@ import com.vaadin.ui.UI;
     	private static String GET_COUNT = "SELECT COUNT(*) FROM test666";
 //           private static String GET_TABLE = "SELECT * FROM global_active_huawei_2g_ran_counters";
 
-    	private static String GET_TABLE = "SELECT * FROM huawei_2g_ran LIMIT 10";
+    	private static String GET_TABLE = "SELECT * FROM huawei_2g_ran LIMIT 20";
        
               public void insertRecords(){
 

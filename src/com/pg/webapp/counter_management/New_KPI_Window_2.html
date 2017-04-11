@@ -3,7 +3,6 @@
  <head>
   <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src&quot;,&quot;THEME&quot;:&quot;valo&quot;}">
   <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
-  
  </head> 
  <body> 
   <vaadin-horizontal-layout width="659px" height-full> 
@@ -29,13 +28,14 @@
      <vaadin-check-box caption="Enable Dynamic Thresholding" _id="dynamic_thresholding" :bottom></vaadin-check-box> 
     </vaadin-horizontal-layout> 
     <vaadin-horizontal-layout spacing width="600px" margin-left _id="formulabar_hl"> 
-     <vaadin-text-area caption="Formula" width="200%" _id="formula_Area"></vaadin-text-area> 
-   
-
+     <vaadin-text-area caption="Formula" text-change-event-mode="eager" null-representation="&quot;&quot;" immediate width="200%" tabindex="1" _id="formula_Area"></vaadin-text-area> 
      <vaadin-native-button plain-text _id="addButton" :right>
        Add 
      </vaadin-native-button> 
      <vaadin-combo-box caption="Counters" input-prompt="Select Counter" _id="counters_ComboBox"></vaadin-combo-box> 
+     <vaadin-label size-auto plain-text _id="charCount_label">
+       Label 
+     </vaadin-label> 
     </vaadin-horizontal-layout> 
     <vaadin-horizontal-layout spacing height="40px" _id="buttons_hl" :bottom :center> 
      <vaadin-native-button plain-text _id="saveButton">

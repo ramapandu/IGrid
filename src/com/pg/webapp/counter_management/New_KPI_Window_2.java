@@ -40,6 +40,7 @@ public class New_KPI_Window_2 extends HorizontalLayout {
 	protected TextArea formula_Area;
 	protected NativeButton addButton;
 	protected ComboBox counters_ComboBox;
+	protected Label charCount_label;
 	protected HorizontalLayout buttons_hl;
 	protected NativeButton saveButton;
 	protected NativeButton validateButton;
