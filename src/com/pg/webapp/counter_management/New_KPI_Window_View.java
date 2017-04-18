@@ -236,6 +236,10 @@ cmdb=new ConterManagement_DB();
 		update_Button = new Button("Update");
 		submit_Button = new Button("Submit");
 		delete_Button = new Button("Delete");
+		
+		update_Button.addStyleName("update-button-cm");
+submit_Button.addStyleName("submit-button-cm");
+delete_Button.addStyleName("delete-button-cm");
 
 		update_Button.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1937340336318912863L;
